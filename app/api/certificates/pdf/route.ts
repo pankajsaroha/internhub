@@ -18,8 +18,9 @@ export async function POST(req: Request) {
     })
 
     await browser.close()
+    const buffer = Buffer.from(pdf)
 
-    return new NextResponse(pdf, {
+    return new NextResponse(buffer, {
         headers: {
             "Content-Type": "application/pdf",
             "Content-Disposition": "attachment; filename=certificate.pdf"
