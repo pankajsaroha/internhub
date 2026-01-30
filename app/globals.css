@@ -1399,3 +1399,35 @@ footer {
   background: rgba(79, 70, 229, 0.08);
   color: #4f46e5;
 }
+
+/* ADMIN – CREATE CERTIFICATE PAGE */
+.admin-container {
+  min-height: calc(100vh - 160px);
+  /* header + footer */
+  padding: 32px 24px 120px;
+  box-sizing: border-box;
+}
+
+/* Input row */
+.admin-container input {
+  height: 40px;
+  padding: 8px 12px;
+  margin-right: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+/* Generate button */
+.admin-container button {
+  height: 40px;
+  padding: 0 16px;
+  background: #2563eb;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.admin-container button:hover {
+  background: #1d4ed8;
+}
