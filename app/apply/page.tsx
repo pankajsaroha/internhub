@@ -1,6 +1,7 @@
 "use client";
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 const BASE_FORM_URL =
@@ -17,7 +18,11 @@ const PROGRAM_MAP: Record<string, string> = {
 
 const ENTRY_ID = "entry.2005620554";
 
-export default function ApplyPage() {
+/**
+ * Inner client component that uses useSearchParams
+ * MUST be wrapped in Suspense
+ */
+function ApplyContent() {
     const searchParams = useSearchParams();
     const slug = searchParams.get("program");
 
@@ -45,7 +50,6 @@ export default function ApplyPage() {
                 </div>
             </header>
 
-
             {/* FORM */}
             <div className="apply-form-wrapper">
                 <iframe
@@ -59,5 +63,13 @@ export default function ApplyPage() {
                 </iframe>
             </div>
         </section>
+    );
+}
+
+export default function ApplyPage() {
+    return (
+        <Suspense fallback={<div />}>
+            <ApplyContent />
+        </Suspense>
     );
 }
