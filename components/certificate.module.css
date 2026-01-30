@@ -1,66 +1,103 @@
 .wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 60px 0;
+    display: flex;
+    justify-content: center;
+    padding: 60px 0;
 }
 
 .certificate {
-  width: 1000px;
-  padding: 60px;
-  background: #fff;
-  border: 2px solid #d4af37;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-  position: relative;
+    width: 1000px;
+    padding: 60px;
+    background: #fff;
+    border: 2px solid #d4af37;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    position: relative;
+    background-color: #ffffff;
+
+    /* WATERMARK */
+    background-image: url("/logo.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 420px;
+}
+
+.certificate::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("/logo.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 420px;
+    opacity: 0.05;
+    pointer-events: none;
+}
+
+.certificate>* {
+    position: relative;
+    z-index: 1;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .header img {
-  height: 60px;
+    max-height: 56px;
+    max-width: 180px;
+    object-fit: contain;
 }
 
 .title {
-  text-align: center;
-  font-size: 38px;
-  margin: 40px 0 24px;
-  letter-spacing: 1px;
+    text-align: center;
+    font-size: 38px;
+    margin: 40px 0 24px;
+    letter-spacing: 1px;
 }
 
 .text {
-  text-align: center;
-  font-size: 18px;
-  margin: 12px 0;
+    text-align: center;
+    font-size: 18px;
+    margin: 12px 0;
 }
 
 .name {
-  text-align: center;
-  font-size: 48px;
-  font-family: "Playfair Display", serif;
-  margin: 20px 0;
+    text-align: center;
+    font-size: 48px;
+    font-family: "Playfair Display", serif;
+    margin: 20px 0;
 }
 
 .program {
-  text-align: center;
-  font-size: 22px;
-  margin-top: 12px;
+    text-align: center;
+    font-size: 22px;
+    margin-top: 12px;
 }
 
 .footer {
-  margin-top: 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
+    margin-top: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
 }
 
 .signature {
-  height: 60px;
+    height: 60px;
 }
 
 .meta {
-  text-align: center;
-  font-size: 14px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 420px;
+    opacity: 0.05;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    user-select: none;
 }
