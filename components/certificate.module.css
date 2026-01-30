@@ -1,0 +1,66 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 60px 0;
+}
+
+.certificate {
+  width: 1000px;
+  padding: 60px;
+  background: #fff;
+  border: 2px solid #d4af37;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header img {
+  height: 60px;
+}
+
+.title {
+  text-align: center;
+  font-size: 38px;
+  margin: 40px 0 24px;
+  letter-spacing: 1px;
+}
+
+.text {
+  text-align: center;
+  font-size: 18px;
+  margin: 12px 0;
+}
+
+.name {
+  text-align: center;
+  font-size: 48px;
+  font-family: "Playfair Display", serif;
+  margin: 20px 0;
+}
+
+.program {
+  text-align: center;
+  font-size: 22px;
+  margin-top: 12px;
+}
+
+.footer {
+  margin-top: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.signature {
+  height: 60px;
+}
+
+.meta {
+  text-align: center;
+  font-size: 14px;
+}
