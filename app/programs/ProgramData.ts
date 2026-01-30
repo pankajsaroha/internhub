@@ -56,7 +56,7 @@ export const programs: Program[] = [
             },
             {
                 title: "Task Management App",
-                points: ["CRUD APIs", "Frontend-backend integration", "Basic auth"],
+                points: ["CRUD APIs", "Frontend-backend integration", "JWT authentication"],
             },
             {
                 title: "Capstone Project",
@@ -66,9 +66,9 @@ export const programs: Program[] = [
 
         techStack: [
             { category: "Frontend", items: ["HTML", "CSS", "JavaScript", "React"] },
-            { category: "Backend", items: ["Node.js", "Express"] },
-            { category: "Database", items: ["MongoDB", "PostgreSQL (basics)"] },
-            { category: "Tools", items: ["Git", "GitHub", "VS Code"] },
+            { category: "Backend", items: ["Node.js", "Express.js", "Spring Boot", "Go"] },
+            { category: "Database", items: ["MongoDB", "MySQL", "PostgreSQL"] },
+            { category: "Tools", items: ["Git", "GitHub", "VS Code", "IntelliJ IDEA", "GoLand"] },
         ],
 
         idealFor: [
@@ -100,8 +100,7 @@ export const programs: Program[] = [
     {
         slug: "backend-development",
         title: "Backend Development",
-        tagline:
-            "Learn how to design scalable, production-ready backend systems.",
+        tagline: "Learn how to design scalable, production-ready backend systems.",
 
         duration: "6 Weeks",
         level: "Intermediate",
@@ -122,14 +121,15 @@ export const programs: Program[] = [
             },
             {
                 title: "Backend Service API",
-                points: ["REST APIs", "Error handling", "Validation"],
+                points: ["REST APIs", "Validation", "Error handling"],
             },
         ],
 
         techStack: [
-            { category: "Languages", items: ["Java", "JavaScript"] },
-            { category: "Frameworks", items: ["Spring Boot", "Node.js", "Express"] },
+            { category: "Languages", items: ["Java", "JavaScript", "Go"] },
+            { category: "Frameworks", items: ["Spring Boot", "Node.js"] },
             { category: "Database", items: ["PostgreSQL", "MySQL"] },
+            { category: "Tools", items: ["Git", "GitHub", "VS Code", "IntelliJ IDEA", "GoLand", "Eclipse"] },
         ],
 
         idealFor: [
@@ -153,8 +153,7 @@ export const programs: Program[] = [
     {
         slug: "frontend-development",
         title: "Frontend Development",
-        tagline:
-            "Build modern, responsive user interfaces used in real applications.",
+        tagline: "Build modern, responsive user interfaces used in real applications.",
 
         duration: "6 Weeks",
         level: "Beginner to Intermediate",
@@ -165,6 +164,7 @@ export const programs: Program[] = [
             "Work with component-based UI",
             "Manage application state",
             "Consume backend APIs",
+            "Optimize frontend performance",
         ],
 
         projects: [
@@ -181,7 +181,7 @@ export const programs: Program[] = [
         techStack: [
             { category: "Core", items: ["HTML", "CSS", "JavaScript"] },
             { category: "Frameworks", items: ["React", "Angular"] },
-            { category: "Tools", items: ["Git", "Browser DevTools"] },
+            { category: "Tools", items: ["Git", "VS Code", "Browser DevTools"] },
         ],
 
         idealFor: [
@@ -205,31 +205,32 @@ export const programs: Program[] = [
     {
         slug: "java-development",
         title: "Java Development",
-        tagline:
-            "Strengthen your Java fundamentals by building backend-focused projects.",
+        tagline: "Strengthen your Java fundamentals by building backend-focused projects.",
 
         duration: "6 Weeks",
         level: "Intermediate",
         mode: "Online · Project-based",
 
         learningOutcomes: [
-            "Write clean and object-oriented Java code",
-            "Understand Spring Boot basics",
+            "Write clean object-oriented Java code",
+            "Understand Spring Boot fundamentals",
             "Build REST APIs",
-            "Work with databases using Java",
+            "Work with databases using JPA",
         ],
 
         projects: [
             {
                 title: "Java Backend Service",
-                points: ["REST APIs", "Spring Boot", "Database integration"],
+                points: ["REST APIs", "Spring Boot", "JPA & Hibernate"],
             },
         ],
 
         techStack: [
             { category: "Language", items: ["Java"] },
-            { category: "Framework", items: ["Spring Boot"] },
+            { category: "Frameworks", items: ["Spring Boot"] },
+            { category: "ORM", items: ["JPA", "Hibernate"] },
             { category: "Database", items: ["PostgreSQL", "MySQL"] },
+            { category: "Tools", items: ["Git", "GitHub", "VS Code", "IntelliJ IDEA", "Eclipse", "STS"] },
         ],
 
         idealFor: ["Java learners", "Backend-focused students"],
@@ -250,8 +251,7 @@ export const programs: Program[] = [
     {
         slug: "python-development",
         title: "Python Development",
-        tagline:
-            "Learn Python by building practical scripts and backend-style projects.",
+        tagline: "Learn Python by building practical scripts and backend-style projects.",
 
         duration: "5 Weeks",
         level: "Beginner",
@@ -260,7 +260,7 @@ export const programs: Program[] = [
         learningOutcomes: [
             "Write clean Python code",
             "Understand core programming concepts",
-            "Build small backend-style applications",
+            "Build backend-style applications",
         ],
 
         projects: [
@@ -272,7 +272,9 @@ export const programs: Program[] = [
 
         techStack: [
             { category: "Language", items: ["Python"] },
-            { category: "Frameworks", items: ["Flask (intro)"] },
+            { category: "Frameworks", items: ["Flask", "Django"] },
+            { category: "Database", items: ["PostgreSQL", "MySQL"] },
+            { category: "Tools", items: ["Git", "GitHub", "VS Code", "PyCharm"] },
         ],
 
         idealFor: ["Beginners", "Non-CS students"],
@@ -293,8 +295,7 @@ export const programs: Program[] = [
     {
         slug: "go-backend-development",
         title: "Go Backend Development",
-        tagline:
-            "Build fast, scalable backend services using Go.",
+        tagline: "Build fast, scalable backend services using Go.",
 
         duration: "6 Weeks",
         level: "Intermediate",
@@ -303,19 +304,21 @@ export const programs: Program[] = [
         learningOutcomes: [
             "Understand Go fundamentals",
             "Build high-performance APIs",
-            "Work with concurrency basics",
+            "Work with concurrency",
         ],
 
         projects: [
             {
                 title: "Go REST API",
-                points: ["HTTP services", "Clean structure", "Performance focus"],
+                points: ["HTTP services", "Clean architecture", "Performance focus"],
             },
         ],
 
         techStack: [
             { category: "Language", items: ["Go"] },
             { category: "Concepts", items: ["Concurrency", "REST APIs"] },
+            { category: "Database", items: ["PostgreSQL", "MySQL"] },
+            { category: "Tools", items: ["Git", "GitHub", "VS Code", "GoLand"] },
         ],
 
         idealFor: ["Backend developers", "System-oriented learners"],
