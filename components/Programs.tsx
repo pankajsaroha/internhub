@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Programs() {
     return (
         <section className="programs" data-aos="fade-up">
@@ -27,7 +29,9 @@ export default function Programs() {
                         Build modern, responsive user interfaces using real-world layouts,
                         components, and workflows.
                     </p>
-                    <button>Explore</button>
+                    <Link href="/programs/frontend-development" className="primary-btn">
+                        Explore
+                    </Link>
                 </div>
 
                 {/* Backend */}
@@ -48,7 +52,9 @@ export default function Programs() {
                         Design APIs, handle databases, and implement server-side logic using
                         industry-style architectures.
                     </p>
-                    <button>Explore</button>
+                    <Link href="/programs/backend-development" className="primary-btn">
+                        Explore
+                    </Link>
                 </div>
 
                 {/* Full Stack */}
@@ -68,7 +74,9 @@ export default function Programs() {
                         Work across frontend and backend to build complete, end-to-end
                         applications.
                     </p>
-                    <button>Explore</button>
+                    <Link href="/programs/full-stack-development" className="primary-btn">
+                        Explore
+                    </Link>
                 </div>
 
                 {/* Java */}
@@ -91,7 +99,9 @@ export default function Programs() {
                         Strengthen your programming fundamentals by building structured,
                         object-oriented projects in Java.
                     </p>
-                    <button>Explore</button>
+                    <Link href="/programs/java-programming" className="primary-btn">
+                        Explore
+                    </Link>
                 </div>
 
                 {/* Python */}
@@ -116,7 +126,9 @@ export default function Programs() {
                         Learn Python through hands-on projects focused on logic, automation,
                         and real-world use cases.
                     </p>
-                    <button>Explore</button>
+                    <Link href="/programs/python-programming" className="primary-btn">
+                        Explore
+                    </Link>
                 </div>
 
                 {/* Go */}
@@ -139,7 +151,9 @@ export default function Programs() {
                         Build high-performance, concurrent applications using Go with a
                         focus on backend systems.
                     </p>
-                    <button>Explore</button>
+                    <Link href="/programs/go-programming" className="primary-btn">
+                        Explore
+                    </Link>
                 </div>
             </div>
         </section>

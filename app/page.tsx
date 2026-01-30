@@ -10,13 +10,11 @@ import AOSInit from "../components/AOSInit";
 export default function Home() {
   return (
     <>
-      <Navbar />
       <Hero />
       <Programs />
       <Certificate />
       <Steps />
       <Testimonials />
-      <Footer />
       <AOSInit />
     </>
   );
