@@ -1,15 +1,17 @@
+import Link from "next/link";
+
 export default function Navbar() {
     return (
         <header className="navbar">
-            <div className="logo">
+            <Link href="/" className="logo">
                 Intern<span>Hub</span>
-            </div>
+            </Link>
             <nav>
-                <a href="#">Home</a>
-                <a href="#">Programs</a>
-                <a href="#">Certificate</a>
-                <a href="#">Contact</a>
-                <button className="btn-primary">Apply Now</button>
+                <Link href="/">Home</Link>
+                <Link href="/programs">Programs</Link>
+                <Link href="/how-it-works">How It Works</Link>
+                <Link href="/contact">Contact</Link>
+                <Link href="/apply" className="btn-primary">Apply Now</Link>
             </nav>
         </header>
     );
