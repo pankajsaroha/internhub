@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="120"
+  height="120"
+  viewBox="0 0 120 120"
+>
+  <path
+    d="M8 8 H112 V20 H20 V112 H8 Z"
+    fill="none"
+    stroke="#D4AF37"
+    stroke-width="5"
+  />
+</svg>

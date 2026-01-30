@@ -101,3 +101,33 @@
     pointer-events: none;
     user-select: none;
 }
+
+.corner {
+    position: absolute;
+    width: 80px;
+    opacity: 0.9;
+    z-index: 0;
+}
+
+.topLeft {
+    top: 16px;
+    left: 16px;
+}
+
+.topRight {
+    top: 16px;
+    right: 16px;
+    transform: rotate(90deg);
+}
+
+.bottomRight {
+    bottom: 16px;
+    right: 16px;
+    transform: rotate(180deg);
+}
+
+.bottomLeft {
+    bottom: 16px;
+    left: 16px;
+    transform: rotate(270deg);
+}

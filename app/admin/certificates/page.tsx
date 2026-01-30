@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import CertificateTemplate from "@/components/CertificateTemplate"
 
@@ -8,6 +10,14 @@ export default function AdminCertificatePage() {
   const [program, setProgram] = useState("")
   const [email, setEmail] = useState("")
   const [certificateId, setCertificateId] = useState("")
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!localStorage.getItem("admin_token")) {
+      router.push("/admin/login")
+    }
+  }, [])
 
   const generateCertificate = async () => {
     const res = await fetch("/api/certificates/create", {
@@ -19,6 +29,34 @@ export default function AdminCertificatePage() {
     const data = await res.json()
     setCertificateId(data.certificateId)
   }
+
+  const downloadPDF = async () => {
+  const res = await fetch("/api/certificates/pdf", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ certificateId }),
+  })
+
+  const blob = await res.blob()
+  const url = window.URL.createObjectURL(blob)
+
+  const a = document.createElement("a")
+  a.href = url
+  a.download = "InternHub-Certificate.pdf"
+  a.click()
+
+  window.URL.revokeObjectURL(url)
+}
+
+const sendEmail = async () => {
+  await fetch("/api/certificates/email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, certificateId }),
+  })
+
+  alert("Certificate sent successfully!")
+}
 
   return (
     <div className="admin-container">
@@ -41,9 +79,23 @@ export default function AdminCertificatePage() {
             certificateId={certificateId}
           />
 
-          <a href={`/certificate/${certificateId}`} target="_blank">
-            Open Certificate
-          </a>
+          <div className="certificate-actions">
+            <button onClick={downloadPDF}>
+              Download PDF
+            </button>
+
+            <button onClick={sendEmail}>
+              Send Email
+            </button>
+
+            <button
+              onClick={() =>
+                window.open(`/certificate/${certificateId}`, "_blank")
+              }
+            >
+              Open Certificate
+            </button>
+          </div>
         </>
       )}
     </div>

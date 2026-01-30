@@ -18,6 +18,10 @@ export default function CertificateTemplate({
     return (
         <div className={styles.wrapper}>
             <div className={styles.certificate}>
+                {/* <img src="/corner-gold.svg" className={`${styles.corner} ${styles.topLeft}`} />
+                <img src="/corner-gold.svg" className={`${styles.corner} ${styles.topRight}`} />
+                <img src="/corner-gold.svg" className={`${styles.corner} ${styles.bottomRight}`} />
+                <img src="/corner-gold.svg" className={`${styles.corner} ${styles.bottomLeft}`} /> */}
 
                 {/* Header */}
                 <div className={styles.header}>
