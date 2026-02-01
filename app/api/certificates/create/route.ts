@@ -1,19 +1,29 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
 import { randomUUID } from "crypto"
+import { createClient } from "@supabase/supabase-js"
+
+export const runtime = "nodejs"
+
+const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export async function POST(req: Request) {
-    globalThis.certificates = globalThis.certificates || {}
     const { name, program, email } = await req.json()
 
-    const certificateId = "IH-" + randomUUID().slice(0, 8)
+    const certificateId = "INZ-" + randomUUID().slice(0, 8)
 
-    // TODO: store in DB later
-    globalThis.certificates ??= {}
-    globalThis.certificates[certificateId] = {
+    const { error } = await supabase.from("certificates").insert({
+        certificate_id: certificateId,
         name,
         program,
         email,
-        issueDate: new Date().toISOString()
+        payment_status: "PENDING",
+    });
+
+    if (error) {
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({ certificateId })

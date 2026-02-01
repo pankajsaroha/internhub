@@ -32,8 +32,8 @@ export const programs: Program[] = [
     // FULL STACK
     // ===============================
     {
-        slug: "full-stack-web-development",
-        title: "Full Stack Web Development",
+        slug: "full-stack-development",
+        title: "Full Stack Development",
         tagline:
             "Build complete web applications by working on real frontend and backend projects.",
 
@@ -203,8 +203,8 @@ export const programs: Program[] = [
     // JAVA
     // ===============================
     {
-        slug: "java-development",
-        title: "Java Development",
+        slug: "java-programming",
+        title: "Java Programming",
         tagline: "Strengthen your Java fundamentals by building backend-focused projects.",
 
         duration: "6 Weeks",
@@ -249,8 +249,8 @@ export const programs: Program[] = [
     // PYTHON
     // ===============================
     {
-        slug: "python-development",
-        title: "Python Development",
+        slug: "python-programming",
+        title: "Python Programming",
         tagline: "Learn Python by building practical scripts and backend-style projects.",
 
         duration: "5 Weeks",
@@ -293,8 +293,8 @@ export const programs: Program[] = [
     // GO
     // ===============================
     {
-        slug: "go-backend-development",
-        title: "Go Backend Development",
+        slug: "go-programming",
+        title: "Go Programming",
         tagline: "Build fast, scalable backend services using Go.",
 
         duration: "6 Weeks",
