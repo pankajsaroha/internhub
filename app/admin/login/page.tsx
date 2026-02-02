@@ -9,21 +9,21 @@ export default function AdminLoginPage() {
 
   const router = useRouter()
 
-  const login = () => {
-    const ADMIN_PASSWORD = process.env.ADMIN_SECRET
+  const login = async () => {
+    const res = await fetch("/api/admin/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password }),
+    });
 
-    if (!ADMIN_PASSWORD) {
-      alert("Admin password not configured")
-      return
+    if (!res.ok) {
+      alert("Invalid password");
+      return;
     }
 
-    if (password === ADMIN_PASSWORD) {
-      localStorage.setItem("admin_token", "authenticated")
-      router.push("/admin/certificates")
-    } else {
-      setError("Invalid admin password")
-    }
-  }
+    localStorage.setItem("admin_token", "authenticated");
+    router.push("/admin/certificates");
+  };
 
   return (
     <div className="admin-login-wrapper">
