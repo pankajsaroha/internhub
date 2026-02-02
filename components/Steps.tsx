@@ -1,7 +1,7 @@
 export default function Steps() {
     return (
         <section className="steps" data-aos="fade-up">
-            <h2>How InternHub Works</h2>
+            <h2>How Inzivoo Works</h2>
 
             <p style={{ maxWidth: "700px", margin: "15px auto", color: "#555" }}>
                 Our learning programs follow a simple, structured flow designed to help

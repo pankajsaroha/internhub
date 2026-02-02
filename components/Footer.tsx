@@ -3,9 +3,9 @@ export default function Footer() {
         <footer>
             <div className="footer-top">
                 <div className="footer-brand">
-                    <h3>InternHub</h3>
+                    <h3>Inzivoo</h3>
                     <p>
-                        InternHub is a global project-based learning platform focused on
+                        Inzivoo is a global project-based learning platform focused on
                         helping learners build practical skills through real-world
                         projects.
                     </p>
@@ -23,14 +23,14 @@ export default function Footer() {
 
                 <div className="footer-contact">
                     <h4>Contact</h4>
-                    <p>Email: support@internhub.com</p>
+                    <p>Email: support@inzivoo.com</p>
                     <p>Mode: Online (Global)</p>
                 </div>
             </div>
 
             <div className="footer-disclaimer">
                 <p>
-                    <strong>Disclaimer:</strong> InternHub is a project-based learning and
+                    <strong>Disclaimer:</strong> Inzivoo is a project-based learning and
                     skill development platform. We do not provide employment, paid
                     internships, job placement, or job guarantees. All certificates issued
                     represent successful completion of training programs only.
@@ -39,7 +39,7 @@ export default function Footer() {
             </div>
 
             <div className="footer-bottom">
-                <p>© 2026 InternHub. All Rights Reserved.</p>
+                <p>© 2026 Inzivoo. All Rights Reserved.</p>
             </div>
         </footer>
     );

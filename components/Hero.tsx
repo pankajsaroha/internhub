@@ -9,7 +9,7 @@ export default function Hero() {
                     </h1>
 
                     <p>
-                        InternHub helps students and beginners gain practical skills through
+                        Inzivoo helps students and beginners gain practical skills through
                         structured, project-based learning programs designed to simulate
                         real industry work.
                     </p>

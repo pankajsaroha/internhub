@@ -25,7 +25,7 @@ export default function CertificateTemplate({
 
                 {/* Header */}
                 <div className={styles.header}>
-                    <img src="/logo.png" alt="InternHub" />
+                    <img src="/logo.png" alt="Inzivoo" />
                     <img src="/msme.png" alt="MSME" />
                 </div>
 
@@ -51,7 +51,7 @@ export default function CertificateTemplate({
                             alt="Founder Signature"
                             className={styles.signature}
                         />
-                        <p>Founder, InternHub</p>
+                        <p>Founder, Inzivoo</p>
                     </div>
 
                     <div className={styles.meta}>
