@@ -6,7 +6,7 @@ export default function PrivacyPage() {
                     <h1>Privacy Policy</h1>
                     <p>
                         Your privacy is important to us. This Privacy Policy explains how
-                        InternHub collects, uses, and protects your information.
+                        Inzivoo collects, uses, and protects your information.
                     </p>
                 </section>
 
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
                 <section className="page-section">
                     <h2>3. Data Sharing</h2>
                     <p>
-                        InternHub does not sell, rent, or trade your personal information to
+                        Inzivoo does not sell, rent, or trade your personal information to
                         third parties.
                     </p>
                     <p>
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
                 <section className="page-section">
                     <h2>4. Cookies & Analytics</h2>
                     <p>
-                        InternHub may use cookies or basic analytics tools to understand how
+                        Inzivoo may use cookies or basic analytics tools to understand how
                         users interact with the website and to improve our services.
                     </p>
                     <p>
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
                 <section className="page-section">
                     <h2>7. Third-Party Links</h2>
                     <p>
-                        Our website may contain links to third-party websites. InternHub is
+                        Our website may contain links to third-party websites. Inzivoo is
                         not responsible for the privacy practices or content of external
                         sites.
                     </p>
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
                 <section className="page-section page-highlight">
                     <h2>8. Changes to This Policy</h2>
                     <p>
-                        InternHub reserves the right to update this Privacy Policy at any
+                        Inzivoo reserves the right to update this Privacy Policy at any
                         time. Continued use of the platform constitutes acceptance of the
                         updated policy.
                     </p>

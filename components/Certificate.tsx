@@ -6,7 +6,7 @@ export default function Certificate() {
 
                 <p>
                     After successfully completing the program and submitting your
-                    project, you’ll receive a Certificate of Completion from InternHub.
+                    project, you’ll receive a Certificate of Completion from Inzivoo.
                 </p>
 
                 <ul>

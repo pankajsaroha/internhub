@@ -10,7 +10,7 @@ export default function AdminLoginPage() {
   const router = useRouter()
 
   const login = () => {
-    const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD
+    const ADMIN_PASSWORD = process.env.ADMIN_SECRET
 
     if (!ADMIN_PASSWORD) {
       alert("Admin password not configured")

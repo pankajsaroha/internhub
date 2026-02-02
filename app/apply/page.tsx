@@ -37,9 +37,9 @@ function ApplyContent() {
         <section className="page-container">
             {/* HEADER */}
             <header className="apply-header">
-                <h1>Apply to InternHub</h1>
+                <h1>Apply to Inzivoo</h1>
                 <p>
-                    InternHub offers structured, project-based learning programs.
+                    Inzivoo offers structured, project-based learning programs.
                     Applications are reviewed manually to ensure a good fit.
                 </p>
 

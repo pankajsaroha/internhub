@@ -42,7 +42,7 @@ export default function AdminCertificatePage() {
 
   const a = document.createElement("a")
   a.href = url
-  a.download = "InternHub-Certificate.pdf"
+  a.download = "Inzivoo-Certificate.pdf"
   a.click()
 
   window.URL.revokeObjectURL(url)

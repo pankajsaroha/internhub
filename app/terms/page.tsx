@@ -6,14 +6,14 @@ export default function TermsPage() {
                     <h1>Terms & Conditions</h1>
                     <p>
                         Please read these Terms & Conditions carefully before using
-                        InternHub.
+                        Inzivoo.
                     </p>
                 </section>
 
                 <section className="page-section">
                     <h2>1. Introduction</h2>
                     <p>
-                        InternHub is a project-based learning and skill development platform.
+                        Inzivoo is a project-based learning and skill development platform.
                         By accessing or using our website and programs, you agree to be bound
                         by these Terms & Conditions.
                     </p>
@@ -22,7 +22,7 @@ export default function TermsPage() {
                 <section className="page-section">
                     <h2>2. Nature of Services</h2>
                     <p>
-                        InternHub provides online, project-based learning programs designed
+                        Inzivoo provides online, project-based learning programs designed
                         for educational and skill development purposes only.
                     </p>
                     <p>
@@ -66,7 +66,7 @@ export default function TermsPage() {
                     <h2>6. Certification</h2>
                     <p>
                         Certificates are issued only upon successful completion of program
-                        requirements. InternHub reserves the right to deny certification if
+                        requirements. Inzivoo reserves the right to deny certification if
                         completion criteria are not met.
                     </p>
                     <p>
@@ -90,7 +90,7 @@ export default function TermsPage() {
                     <h2>8. Intellectual Property</h2>
                     <p>
                         All website content, materials, logos, and branding belong to
-                        InternHub. Participants retain ownership of their original project
+                        Inzivoo. Participants retain ownership of their original project
                         work.
                     </p>
                 </section>
@@ -98,7 +98,7 @@ export default function TermsPage() {
                 <section className="page-section">
                     <h2>9. Limitation of Liability</h2>
                     <p>
-                        InternHub is not liable for any direct or indirect loss arising from
+                        Inzivoo is not liable for any direct or indirect loss arising from
                         the use of our platform, programs, or certificates.
                     </p>
                 </section>
@@ -106,7 +106,7 @@ export default function TermsPage() {
                 <section className="page-section page-highlight">
                     <h2>10. Changes to Terms</h2>
                     <p>
-                        InternHub reserves the right to modify these Terms & Conditions at
+                        Inzivoo reserves the right to modify these Terms & Conditions at
                         any time. Continued use of the platform constitutes acceptance of
                         updated terms.
                     </p>

@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const verifyUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify/${certificateId}`
 
     await transporter.sendMail({
-        from: "InternHub <noreply@internhub.com>",
+        from: "Inzivoo <noreply@inzivoo.com>",
         to: email,
         subject: "Your Internship Certificate",
         html: `

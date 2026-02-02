@@ -4,14 +4,14 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: "InternHub | Project-Based Training & Certification",
+  title: "Inzivoo | Project-Based Training & Certification",
   description:
-    "InternHub offers project-based training programs with real-world tasks and completion certificates.",
+    "Inzivoo offers project-based training programs with real-world tasks and completion certificates.",
   keywords: [
     "project based training",
     "internship certificate",
     "developer training",
-    "internhub",
+    "inzivoo",
   ],
   icons: {
     icon: "/favicon.ico",

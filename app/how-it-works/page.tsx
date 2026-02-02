@@ -5,9 +5,9 @@ export default function HowItWorksPage() {
         <section className="page-container">
             {/* ================= HEADER ================= */}
             <header className="how-header">
-                <h1>How InternHub Works</h1>
+                <h1>How Inzivoo Works</h1>
                 <p>
-                    InternHub is a project-based learning platform focused on real skills,
+                    Inzivoo is a project-based learning platform focused on real skills,
                     practical experience, and honest outcomes.
                 </p>
             </header>
@@ -102,7 +102,7 @@ export default function HowItWorksPage() {
 
             {/* ================= WHAT WE ARE NOT ================= */}
             <section className="how-warning">
-                <h2>What InternHub Is Not</h2>
+                <h2>What Inzivoo Is Not</h2>
                 <ul>
                     <li>Not a paid internship</li>
                     <li>No stipend</li>
@@ -129,8 +129,8 @@ export default function HowItWorksPage() {
                 <h2>FAQs</h2>
 
                 <div className="faq">
-                    <strong>Is InternHub a paid internship?</strong>
-                    <p>No. InternHub is an unpaid, learning-focused program.</p>
+                    <strong>Is Inzivoo a paid internship?</strong>
+                    <p>No. Inzivoo is an unpaid, learning-focused program.</p>
                 </div>
 
                 <div className="faq">

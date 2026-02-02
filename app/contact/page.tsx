@@ -5,7 +5,7 @@ export default function ContactPage() {
       <header className="contact-header">
         <h1>Contact Us</h1>
         <p>
-          Have a question about programs, applications, or how InternHub works?
+          Have a question about programs, applications, or how Inzivoo works?
           We’re happy to help.
         </p>
       </header>
@@ -25,7 +25,7 @@ export default function ContactPage() {
           <ul>
             <li>
               <strong>Email:</strong>{" "}
-              <a href="mailto:support@internhub.com">support@internhub.com</a>
+              <a href="mailto:support@inzivoo.com">support@inzivoo.com</a>
             </li>
             <li>
               <strong>Response time:</strong> Within 24–48 hours
@@ -33,7 +33,7 @@ export default function ContactPage() {
           </ul>
 
           <p className="muted">
-            Please note: InternHub does not offer placement guarantees or paid
+            Please note: Inzivoo does not offer placement guarantees or paid
             internships.
           </p>
         </section>
