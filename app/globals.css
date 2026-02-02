@@ -59,6 +59,17 @@ li {
   font-weight: 700;
   color: white;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  /* dark navbar ke liye */
+  line-height: 1;
 }
 
 .logo span {

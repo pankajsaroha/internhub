@@ -14,7 +14,7 @@ export const metadata = {
     "inzivoo",
   ],
   icons: {
-    icon: "/favicon.ico",
+    icon: "/logo.png",
   },
 };
 
