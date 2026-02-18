@@ -8,12 +8,12 @@ const BASE_FORM_URL =
     "https://docs.google.com/forms/d/e/1FAIpQLSefCu9swRQfPpfrX-ngxU6oMq_d6tXvrSnPTDyY3QcUSWAe0Q/viewform";
 
 const PROGRAM_MAP: Record<string, string> = {
-    backend: "Backend Development",
-    frontend: "Frontend Development",
-    fullstack: "Full Stack Development",
-    java: "Java Development",
-    python: "Python Development",
-    go: "Go Development",
+    "backend-development": "Backend Development",
+    "frontend-development": "Frontend Development",
+    "full-stack-development": "Full Stack Development",
+    "java-programming": "Java Programming",
+    "python-programming": "Python Programming",
+    "go-programming": "Go Programming",
 };
 
 const ENTRY_ID = "entry.2005620554";

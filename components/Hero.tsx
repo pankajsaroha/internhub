@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Hero() {
     return (
         <section className="hero">
@@ -18,10 +20,12 @@ export default function Hero() {
                         Build projects. Get guidance. Earn proof of learning.
                     </p>
 
-                    <button className="btn-primary">Get Started</button>
-                    <button className="btn-secondary" style={{ marginLeft: "12px" }}>
+                    <Link href="/apply" className="btn-primary">
+                        Get Started
+                    </Link>
+                    <Link href="/programs" className="btn-secondary" style={{ marginLeft: "12px" }}>
                         Explore Programs
-                    </button>
+                    </Link>
                 </div>
 
                 {/* SVG Illustration */}

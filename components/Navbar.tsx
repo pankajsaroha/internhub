@@ -5,17 +5,18 @@ export default function Navbar() {
     return (
         <header className="navbar">
             <Link href="/" className="logo">
-                {/* <Image
-                    src="/logo.png"
-                    alt="Inzivoo"
-                    width={36}
-                    height={36}
+                <Image
+                    src="/Inzivoo9.png"
+                    alt="INZIVOO"
+                    width={220}
+                    height={30}
                     priority
-                /> */}
-                <span className="brand-name">Inzivoo</span>
+                    className="brand-logo-image"
+                />  
             </Link>
             <nav>
                 <Link href="/">Home</Link>
+                <Link href="/quiz">Quizzes</Link>
                 <Link href="/programs">Programs</Link>
                 <Link href="/how-it-works">How It Works</Link>
                 <Link href="/contact">Contact</Link>
