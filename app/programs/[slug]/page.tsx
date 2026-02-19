@@ -18,24 +18,6 @@ export default async function ProgramDetailPage({ params }: Props) {
         <>
             {/* ================= FULL-WIDTH HERO ================= */}
             <header className="program-hero">
-                {/* SVG BACKGROUND */}
-                <svg
-                    className="program-hero-bg"
-                    viewBox="0 0 1440 600"
-                    preserveAspectRatio="none"
-                    aria-hidden="true"
-                >
-                    <path
-                        d="M0,200 C200,100 400,300 720,260 1040,220 1240,100 1440,160 L1440,0 L0,0 Z"
-                        fill="rgba(99,102,241,0.12)"
-                    />
-                    <path
-                        d="M0,320 C240,260 420,420 760,360 1080,300 1240,420 1440,380 L1440,0 L0,0 Z"
-                        fill="rgba(168,85,247,0.10)"
-                    />
-                </svg>
-
-                {/* HERO CONTENT (CONSTRAINED) */}
                 <div className="program-hero-content">
                     <h1>{program.title}</h1>
                     <p className="subtitle">{program.tagline}</p>
@@ -56,7 +38,6 @@ export default async function ProgramDetailPage({ params }: Props) {
                     <a href={`/apply?program=${slug}`} className="primary-btn">
                         Apply Now
                     </a>
-
                 </div>
             </header>
 
@@ -150,7 +131,6 @@ export default async function ProgramDetailPage({ params }: Props) {
                         <a href={`/apply?program=${slug}`} className="primary-btn">
                             Apply Now
                         </a>
-
                     </div>
                 </div>
             </section>
