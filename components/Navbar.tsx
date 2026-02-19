@@ -8,7 +8,7 @@ export default function Navbar() {
                 <Image
                     src="/Inzivoo9.png"
                     alt="INZIVOO"
-                    width={220}
+                    width={150}
                     height={30}
                     priority
                     className="brand-logo-image"
