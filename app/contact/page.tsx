@@ -55,12 +55,12 @@ export default function ContactPage() {
       </div>
 
       {/* ================= FOOTER NOTE ================= */}
-      <footer className="contact-footer">
+      <div className="contact-footer">
         <p>
           We value thoughtful questions and serious learners.  
           Reach out when you’re ready to commit to learning by doing.
         </p>
-      </footer>
+      </div>
     </section>
   );
 }

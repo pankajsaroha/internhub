@@ -1,6 +1,8 @@
+import Link from "next/link";
+
 export default function Footer() {
     return (
-        <footer>
+        <footer className="site-footer">
             <div className="footer-top">
                 <div className="footer-brand">
                     <h3>Inzivoo</h3>
@@ -14,10 +16,10 @@ export default function Footer() {
                 <div className="footer-links">
                     <h4>Quick Links</h4>
                     <ul>
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/about">About Us</a></li>
-                        <li><a href="/terms">Terms & Conditions</a></li>
-                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><Link href="/">Home</Link></li>
+                        <li><Link href="/about">About Us</Link></li>
+                        <li><Link href="/terms">Terms & Conditions</Link></li>
+                        <li><Link href="/privacy">Privacy Policy</Link></li>
                     </ul>
                 </div>
 
