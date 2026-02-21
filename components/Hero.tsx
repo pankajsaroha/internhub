@@ -20,12 +20,14 @@ export default function Hero() {
                         Build projects. Get guidance. Earn proof of learning.
                     </p>
 
-                    <Link href="/apply" className="btn-primary">
-                        Get Started
-                    </Link>
-                    <Link href="/programs" className="btn-secondary" style={{ marginLeft: "12px" }}>
-                        Explore Programs
-                    </Link>
+                    <div className="hero-actions">
+                        <Link href="/apply" className="btn-primary">
+                            Get Started
+                        </Link>
+                        <Link href="/programs" className="btn-secondary">
+                            Explore Programs
+                        </Link>
+                    </div>
                 </div>
 
                 {/* SVG Illustration */}
