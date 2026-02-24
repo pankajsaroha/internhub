@@ -381,7 +381,8 @@ li {
 }
 
 /* CTA Button */
-.card button {
+.card button,
+.card .primary-btn {
   margin-top: auto;
   /* aligns all buttons */
   align-self: flex-start;
@@ -399,7 +400,12 @@ li {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card button:hover {
+.card .primary-btn {
+  display: inline-flex;
+}
+
+.card button:hover,
+.card .primary-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 8px 22px rgba(59, 130, 246, 0.35);
 }
@@ -1132,6 +1138,11 @@ li {
 }
 
 /* Programs Page */
+.programs-page {
+  padding-top: 32px;
+  padding-bottom: 56px;
+}
+
 .programs-header {
   max-width: 720px;
   margin-bottom: 48px;
@@ -1997,6 +2008,20 @@ li {
   gap: 12px;
 }
 
+.quiz-code {
+  margin-top: 16px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  background: #f8faff;
+  color: #1f2937;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
 .quiz-option {
   width: 100%;
   text-align: left;
@@ -2023,6 +2048,14 @@ li {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.quiz-actions select {
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #ffffff;
+  font-size: 14px;
 }
 
 .quiz-actions button:disabled {

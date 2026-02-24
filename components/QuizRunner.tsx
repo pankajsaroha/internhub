@@ -6,6 +6,11 @@ import {
   QUIZ_QUESTIONS_PER_ATTEMPT,
   QUIZ_ADVANCED_PER_ATTEMPT,
   QUIZ_EASY_PER_ATTEMPT,
+  QUIZ_EXPERIENCED_EASY_PER_ATTEMPT,
+  QUIZ_EXPERIENCED_ADVANCED_PER_ATTEMPT,
+  QUIZ_PREMIUM_EASY_PER_ATTEMPT,
+  QUIZ_PREMIUM_ADVANCED_PER_ATTEMPT,
+  QUIZ_PREMIUM_PER_ATTEMPT,
   type QuizQuestion,
   type QuizProgram,
 } from "@/app/quiz/quizData";
@@ -14,9 +19,28 @@ type QuizRunnerProps = {
   program: QuizProgram;
 };
 
-function pickRandomQuestions(questionBank: QuizQuestion[]) {
-  const easyPool = questionBank.filter((q) => q.difficulty === "easy");
-  const advancedPool = questionBank.filter((q) => q.difficulty === "advanced");
+type QuizAttemptLevel = "fresher" | "experienced" | "premium";
+
+type AttemptFilters = {
+  topic: string;
+  level: QuizAttemptLevel;
+};
+
+const QUIZ_LEVEL_STORAGE_KEY = "inzivoo_quiz_level";
+
+function isQuizAttemptLevel(value: string): value is QuizAttemptLevel {
+  return value === "fresher" || value === "experienced" || value === "premium";
+}
+
+function pickRandomQuestions(questionBank: QuizQuestion[], filters: AttemptFilters) {
+  const filteredBank =
+    filters.topic === "all"
+      ? questionBank
+      : questionBank.filter((q) => q.topic === filters.topic);
+
+  const easyPool = filteredBank.filter((q) => q.difficulty === "easy");
+  const advancedPool = filteredBank.filter((q) => q.difficulty === "advanced");
+  const premiumPool = filteredBank.filter((q) => q.difficulty === "premium");
 
   const shuffle = (items: QuizQuestion[]) => {
     const shuffled = [...items];
@@ -27,19 +51,34 @@ function pickRandomQuestions(questionBank: QuizQuestion[]) {
     return shuffled;
   };
 
-  const easyPicked = shuffle(easyPool).slice(
-    0,
-    Math.min(QUIZ_EASY_PER_ATTEMPT, easyPool.length)
-  );
+  const easyTarget =
+    filters.level === "premium"
+      ? QUIZ_PREMIUM_EASY_PER_ATTEMPT
+      : filters.level === "experienced"
+      ? QUIZ_EXPERIENCED_EASY_PER_ATTEMPT
+      : QUIZ_EASY_PER_ATTEMPT;
+  const advancedTarget =
+    filters.level === "premium"
+      ? QUIZ_PREMIUM_ADVANCED_PER_ATTEMPT
+      : filters.level === "experienced"
+      ? QUIZ_EXPERIENCED_ADVANCED_PER_ATTEMPT
+      : QUIZ_ADVANCED_PER_ATTEMPT;
+  const premiumTarget = filters.level === "premium" ? QUIZ_PREMIUM_PER_ATTEMPT : 0;
+
+  const easyPicked = shuffle(easyPool).slice(0, Math.min(easyTarget, easyPool.length));
   const advancedPicked = shuffle(advancedPool).slice(
     0,
-    Math.min(QUIZ_ADVANCED_PER_ATTEMPT, advancedPool.length)
+    Math.min(advancedTarget, advancedPool.length)
+  );
+  const premiumPicked = shuffle(premiumPool).slice(
+    0,
+    Math.min(premiumTarget, premiumPool.length)
   );
 
-  const selected = [...easyPicked, ...advancedPicked];
+  const selected = [...easyPicked, ...advancedPicked, ...premiumPicked];
   if (selected.length < QUIZ_QUESTIONS_PER_ATTEMPT) {
     const pickedIds = new Set(selected.map((q) => q.id));
-    const remaining = shuffle(questionBank.filter((q) => !pickedIds.has(q.id)));
+    const remaining = shuffle(filteredBank.filter((q) => !pickedIds.has(q.id)));
     selected.push(
       ...remaining.slice(
         0,
@@ -64,25 +103,113 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
   const [submitted, setSubmitted] = useState(false);
   const [attemptQuestions, setAttemptQuestions] = useState<QuizQuestion[]>([]);
   const [isReady, setIsReady] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [selectedTopic, setSelectedTopic] = useState("all");
+  const [selectedLevel, setSelectedLevel] = useState<QuizAttemptLevel>("fresher");
+  const [timeLeftSeconds, setTimeLeftSeconds] = useState(
+    program.durationMinutes * 60
+  );
 
-  useEffect(() => {
+  const availableTopics = Array.from(
+    new Set(program.questionBank.map((question) => question.topic))
+  ).sort();
+
+  function getSavedLevel(): QuizAttemptLevel {
+    if (typeof window === "undefined") return "fresher";
+    const savedLevel = window.localStorage.getItem(QUIZ_LEVEL_STORAGE_KEY);
+    return savedLevel && isQuizAttemptLevel(savedLevel) ? savedLevel : "fresher";
+  }
+
+  function setLevel(level: QuizAttemptLevel) {
+    setSelectedLevel(level);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(QUIZ_LEVEL_STORAGE_KEY, level);
+    }
+  }
+
+  function startAttempt(filters: AttemptFilters) {
+    if (!hasStarted && typeof window !== "undefined") {
+      window.history.pushState({ quizAttempt: true }, "", window.location.href);
+    }
     setCurrentIndex(0);
     setAnswers({});
     setSubmitted(false);
-    setAttemptQuestions(pickRandomQuestions(program.questionBank));
+    setAttemptQuestions(pickRandomQuestions(program.questionBank, filters));
+    setTimeLeftSeconds(program.durationMinutes * 60);
+    setHasStarted(true);
     setIsReady(true);
-  }, [program.slug, program.questionBank]);
+  }
+
+  useEffect(() => {
+    const initialFilters: AttemptFilters = { topic: "all", level: getSavedLevel() };
+    setSelectedTopic(initialFilters.topic);
+    setLevel(initialFilters.level);
+    setCurrentIndex(0);
+    setAnswers({});
+    setSubmitted(false);
+    setAttemptQuestions([]);
+    setHasStarted(false);
+    setTimeLeftSeconds(program.durationMinutes * 60);
+    setIsReady(true);
+  }, [program.slug, program.questionBank, program.durationMinutes]);
+
+  useEffect(() => {
+    if (!isReady || submitted || !hasStarted) return;
+
+    const intervalId = window.setInterval(() => {
+      setTimeLeftSeconds((previous) => {
+        if (previous <= 1) {
+          window.clearInterval(intervalId);
+          return 0;
+        }
+        return previous - 1;
+      });
+    }, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [isReady, submitted, hasStarted]);
+
+  useEffect(() => {
+    if (!isReady || submitted || !hasStarted || timeLeftSeconds > 0) return;
+    setSubmitted(true);
+  }, [isReady, submitted, hasStarted, timeLeftSeconds]);
+
+  useEffect(() => {
+    const onPopState = () => {
+      if (!hasStarted) return;
+      setCurrentIndex(0);
+      setAnswers({});
+      setSubmitted(false);
+      setAttemptQuestions([]);
+      setTimeLeftSeconds(program.durationMinutes * 60);
+      setHasStarted(false);
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [hasStarted, program.durationMinutes]);
 
   const currentQuestion = attemptQuestions[currentIndex];
   const totalQuestions = attemptQuestions.length;
   const answeredCount = attemptQuestions.reduce((count, _, idx) => {
     return answers[idx] !== undefined ? count + 1 : count;
   }, 0);
-  const score = attemptQuestions.reduce((total, question, idx) => {
-    return answers[idx] === question.answerIndex ? total + 1 : total;
+  const attemptedQuestions = attemptQuestions
+    .map((question, idx) => ({ question, idx, selected: answers[idx] }))
+    .filter((entry) => entry.selected !== undefined);
+  const score = attemptedQuestions.reduce((total, entry) => {
+    return entry.selected === entry.question.answerIndex ? total + 1 : total;
   }, 0);
 
-  const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
+  const percentage =
+    attemptedQuestions.length > 0
+      ? Math.round((score / attemptedQuestions.length) * 100)
+      : 0;
+  const timerMinutes = Math.floor(timeLeftSeconds / 60);
+  const timerSeconds = timeLeftSeconds % 60;
+  const formattedTimeLeft = `${String(timerMinutes).padStart(2, "0")}:${String(
+    timerSeconds
+  ).padStart(2, "0")}`;
 
   if (!isReady) {
     return (
@@ -94,6 +221,52 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
         <div className="quiz-panel">
           <div className="quiz-progress">
             <span>Loading questions…</span>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!hasStarted) {
+    return (
+      <section className="page-container quiz-detail-page">
+        <header className="quiz-header">
+          <h1>{program.title}</h1>
+          <p>{program.description}</p>
+          <div className="quiz-meta">
+            <span>{program.durationMinutes} Minutes</span>
+            <span>Select topic and level, then start quiz</span>
+          </div>
+        </header>
+
+        <div className="quiz-panel">
+          <div className="quiz-actions">
+            <select
+              value={selectedTopic}
+              onChange={(event) => setSelectedTopic(event.target.value)}
+              aria-label="Select topic"
+            >
+              <option value="all">All Topics</option>
+              {availableTopics.map((topic) => (
+                <option key={topic} value={topic}>
+                  {topic}
+                </option>
+              ))}
+            </select>
+            <select
+              value={selectedLevel}
+              onChange={(event) =>
+                setLevel(event.target.value as QuizAttemptLevel)
+              }
+              aria-label="Select level"
+            >
+              <option value="fresher">Fresher Level</option>
+              <option value="experienced">Experienced Level</option>
+              <option value="premium">Premium Level</option>
+            </select>
+            <button type="button" onClick={applyFilters} className="btn-primary">
+              Start Quiz
+            </button>
           </div>
         </div>
       </section>
@@ -133,10 +306,20 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
   }
 
   function restartQuiz() {
+    startAttempt({ topic: selectedTopic, level: selectedLevel });
+  }
+
+  function applyFilters() {
+    startAttempt({ topic: selectedTopic, level: selectedLevel });
+  }
+
+  function returnToSetup() {
     setCurrentIndex(0);
     setAnswers({});
     setSubmitted(false);
-    setAttemptQuestions(pickRandomQuestions(program.questionBank));
+    setAttemptQuestions([]);
+    setTimeLeftSeconds(program.durationMinutes * 60);
+    setHasStarted(false);
   }
 
   return (
@@ -146,7 +329,7 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
         <p>{program.description}</p>
         <div className="quiz-meta">
           <span>{totalQuestions} Questions</span>
-          <span>{program.durationMinutes} Minutes</span>
+          <span>Time Left: {formattedTimeLeft}</span>
         </div>
       </header>
 
@@ -156,8 +339,20 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
             <span>
               Question {currentIndex + 1} of {totalQuestions}
             </span>
-            <span>{answeredCount} answered</span>
+            <span>
+              {answeredCount} answered |{" "}
+              {selectedTopic === "all" ? "All Topics" : selectedTopic} |{" "}
+              {selectedLevel === "fresher"
+                ? "Fresher"
+                : selectedLevel === "experienced"
+                ? "Experienced"
+                : "Premium"}
+            </span>
           </div>
+
+          {currentQuestion.codeSnippet ? (
+            <pre className="quiz-code">{currentQuestion.codeSnippet}</pre>
+          ) : null}
 
           <h2>{currentQuestion.question}</h2>
 
@@ -178,6 +373,9 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
           </div>
 
           <div className="quiz-actions">
+            <button type="button" onClick={returnToSetup} className="btn-secondary">
+              Change Setup
+            </button>
             <button
               type="button"
               onClick={goBack}
@@ -207,23 +405,28 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
         <div className="quiz-result">
           <h2>Quiz Completed</h2>
           <p>
-            Your score: {score}/{totalQuestions} ({percentage}%)
+            Your score: {score}/{attemptedQuestions.length} ({percentage}%)
           </p>
+          {attemptedQuestions.length < totalQuestions ? (
+            <p>
+              You attempted only {attemptedQuestions.length} out of {totalQuestions} questions.
+            </p>
+          ) : null}
 
           <div className="quiz-review">
-            {attemptQuestions.map((question, idx) => {
-              const selected = answers[idx];
+            {attemptedQuestions.map(({ question, selected }) => {
               const isCorrect = selected === question.answerIndex;
 
               return (
                 <article key={question.id} className="quiz-review-item">
+                  {question.codeSnippet ? (
+                    <pre className="quiz-code">{question.codeSnippet}</pre>
+                  ) : null}
                   <h3>{question.question}</h3>
                   <p>
                     Your answer:{" "}
                     <strong>
-                      {selected !== undefined
-                        ? question.options[selected]
-                        : "Not answered"}
+                      {selected !== undefined ? question.options[selected] : "Not answered"}
                     </strong>
                   </p>
                   <p>
@@ -242,6 +445,9 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
           <div className="quiz-actions">
             <button type="button" onClick={restartQuiz} className="btn-secondary">
               Retake Quiz
+            </button>
+            <button type="button" onClick={returnToSetup} className="btn-secondary">
+              Change Setup
             </button>
             <Link href="/quiz" className="btn-primary">
               Back to Quiz List

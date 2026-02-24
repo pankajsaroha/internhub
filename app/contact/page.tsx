@@ -25,7 +25,7 @@ export default function ContactPage() {
           <ul>
             <li>
               <strong>Email:</strong>{" "}
-              <a href="mailto:support@inzivoo.com">support@inzivoo.com</a>
+              <a href="mailto:info@inzivoo.com">info@inzivoo.com</a>
             </li>
             <li>
               <strong>Response time:</strong> Within 24–48 hours
