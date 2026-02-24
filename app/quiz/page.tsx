@@ -160,7 +160,7 @@ export default function QuizListPage() {
           <span className="program-tag">{style?.tag ?? "Program"}</span>
           <h3>{program.title}</h3>
           <p>{program.description}</p>
-          <Link href={`/quiz/${program.slug}`} className="primary-btn">
+          <Link href={`/quiz/${program.slug}`} className="view-link">
             Start Quiz
           </Link>
         </div>

@@ -24,7 +24,7 @@ export default function Hero() {
                         <Link href="/apply" className="btn-primary">
                             Get Started
                         </Link>
-                        <Link href="/programs" className="btn-secondary">
+                        <Link href="/programs" className="view-link">
                             Explore Programs
                         </Link>
                     </div>

@@ -200,10 +200,18 @@ li {
 }
 
 .hero-actions .btn-primary,
-.hero-actions .btn-secondary {
+.hero-actions .btn-secondary,
+.hero-actions .plain-click-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.hero-actions .view-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
 }
 
 .hero-image svg {
@@ -1586,6 +1594,18 @@ li {
 }
 
 .text-link:hover {
+  text-decoration: underline;
+}
+
+.plain-click-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: inherit;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.plain-click-link:hover {
   text-decoration: underline;
 }
 

@@ -29,7 +29,7 @@ export default function Programs() {
                         Build modern, responsive user interfaces using real-world layouts,
                         components, and workflows.
                     </p>
-                    <Link href="/programs/frontend-development" className="primary-btn">
+                    <Link href="/programs/frontend-development" className="view-link">
                         Explore
                     </Link>
                 </div>
@@ -52,7 +52,7 @@ export default function Programs() {
                         Design APIs, handle databases, and implement server-side logic using
                         industry-style architectures.
                     </p>
-                    <Link href="/programs/backend-development" className="primary-btn">
+                    <Link href="/programs/backend-development" className="view-link">
                         Explore
                     </Link>
                 </div>
@@ -74,7 +74,7 @@ export default function Programs() {
                         Work across frontend and backend to build complete, end-to-end
                         applications.
                     </p>
-                    <Link href="/programs/full-stack-development" className="primary-btn">
+                    <Link href="/programs/full-stack-development" className="view-link">
                         Explore
                     </Link>
                 </div>
@@ -99,7 +99,7 @@ export default function Programs() {
                         Strengthen your programming fundamentals by building structured,
                         object-oriented projects in Java.
                     </p>
-                    <Link href="/programs/java-programming" className="primary-btn">
+                    <Link href="/programs/java-programming" className="view-link">
                         Explore
                     </Link>
                 </div>
@@ -126,7 +126,7 @@ export default function Programs() {
                         Learn Python through hands-on projects focused on logic, automation,
                         and real-world use cases.
                     </p>
-                    <Link href="/programs/python-programming" className="primary-btn">
+                    <Link href="/programs/python-programming" className="view-link">
                         Explore
                     </Link>
                 </div>
@@ -151,7 +151,7 @@ export default function Programs() {
                         Build high-performance, concurrent applications using Go with a
                         focus on backend systems.
                     </p>
-                    <Link href="/programs/go-programming" className="primary-btn">
+                    <Link href="/programs/go-programming" className="view-link">
                         Explore
                     </Link>
                 </div>
