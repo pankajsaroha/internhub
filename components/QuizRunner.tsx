@@ -295,7 +295,7 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
             >
               <option value="fresher">Beginner Level</option>
               <option value="experienced">Intermediate Level</option>
-              <option value="premium">Expert Level</option>
+              <option value="premium">Advance Level</option>
             </select>
             <button type="button" onClick={applyFilters} className="btn-primary">
               Start Quiz
