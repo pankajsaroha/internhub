@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   QUIZ_QUESTIONS_PER_ATTEMPT,
   QUIZ_ADVANCED_PER_ATTEMPT,
@@ -25,12 +25,6 @@ type AttemptFilters = {
   topic: string;
   level: QuizAttemptLevel;
 };
-
-const QUIZ_LEVEL_STORAGE_KEY = "inzivoo_quiz_level";
-
-function isQuizAttemptLevel(value: string): value is QuizAttemptLevel {
-  return value === "fresher" || value === "experienced" || value === "premium";
-}
 
 function pickRandomQuestions(questionBank: QuizQuestion[], filters: AttemptFilters) {
   const filteredBank =
@@ -114,17 +108,8 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
     new Set(program.questionBank.map((question) => question.topic))
   ).sort();
 
-  function getSavedLevel(): QuizAttemptLevel {
-    if (typeof window === "undefined") return "fresher";
-    const savedLevel = window.localStorage.getItem(QUIZ_LEVEL_STORAGE_KEY);
-    return savedLevel && isQuizAttemptLevel(savedLevel) ? savedLevel : "fresher";
-  }
-
   function setLevel(level: QuizAttemptLevel) {
     setSelectedLevel(level);
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(QUIZ_LEVEL_STORAGE_KEY, level);
-    }
   }
 
   function startAttempt(filters: AttemptFilters) {
@@ -140,8 +125,19 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
     setIsReady(true);
   }
 
+  const confirmExitAttempt = useCallback(() => {
+    if (submitted || !hasStarted) return true;
+
+    return window.confirm(
+      "Are you sure you want to exit the quiz? Your current progress will be lost."
+    );
+  }, [
+    submitted,
+    hasStarted,
+  ]);
+
   useEffect(() => {
-    const initialFilters: AttemptFilters = { topic: "all", level: getSavedLevel() };
+    const initialFilters: AttemptFilters = { topic: "all", level: "fresher" };
     setSelectedTopic(initialFilters.topic);
     setLevel(initialFilters.level);
     setCurrentIndex(0);
@@ -177,6 +173,10 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
   useEffect(() => {
     const onPopState = () => {
       if (!hasStarted) return;
+      if (!confirmExitAttempt()) {
+        window.history.pushState({ quizAttempt: true }, "", window.location.href);
+        return;
+      }
       setCurrentIndex(0);
       setAnswers({});
       setSubmitted(false);
@@ -187,7 +187,40 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
 
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
-  }, [hasStarted, program.durationMinutes]);
+  }, [hasStarted, program.durationMinutes, confirmExitAttempt]);
+
+  useEffect(() => {
+    if (!hasStarted || submitted) return;
+
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    const onLinkClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      const anchor = target?.closest("a[href]") as HTMLAnchorElement | null;
+      if (!anchor) return;
+      if (anchor.target === "_blank") return;
+
+      const nextUrl = new URL(anchor.href, window.location.href);
+      const currentUrl = new URL(window.location.href);
+      if (nextUrl.href === currentUrl.href) return;
+
+      if (!confirmExitAttempt()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    window.addEventListener("beforeunload", onBeforeUnload);
+    document.addEventListener("click", onLinkClick, true);
+
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      document.removeEventListener("click", onLinkClick, true);
+    };
+  }, [hasStarted, submitted, confirmExitAttempt]);
 
   const currentQuestion = attemptQuestions[currentIndex];
   const totalQuestions = attemptQuestions.length;
@@ -235,7 +268,7 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
           <p>{program.description}</p>
           <div className="quiz-meta">
             <span>{program.durationMinutes} Minutes</span>
-            <span>Select topic and level, then start quiz</span>
+            <span>Select topic and level, start quiz</span>
           </div>
         </header>
 
@@ -260,9 +293,9 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
               }
               aria-label="Select level"
             >
-              <option value="fresher">Fresher Level</option>
-              <option value="experienced">Experienced Level</option>
-              <option value="premium">Premium Level</option>
+              <option value="fresher">Beginner Level</option>
+              <option value="experienced">Intermediate Level</option>
+              <option value="premium">Expert Level</option>
             </select>
             <button type="button" onClick={applyFilters} className="btn-primary">
               Start Quiz
@@ -314,6 +347,7 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
   }
 
   function returnToSetup() {
+    if (!confirmExitAttempt()) return;
     setCurrentIndex(0);
     setAnswers({});
     setSubmitted(false);
@@ -343,10 +377,10 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
               {answeredCount} answered |{" "}
               {selectedTopic === "all" ? "All Topics" : selectedTopic} |{" "}
               {selectedLevel === "fresher"
-                ? "Fresher"
+                ? "Beginner"
                 : selectedLevel === "experienced"
-                ? "Experienced"
-                : "Premium"}
+                ? "Intermediate"
+                : "Expert"}
             </span>
           </div>
 
