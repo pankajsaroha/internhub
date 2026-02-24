@@ -565,7 +565,7 @@ export const quizPrograms: QuizProgram[] = [
     slug: "java-programming",
     title: "Java Programming Quiz",
     description:
-      "GFG-style original Java quiz with concept, output, and scenario-based MCQs.",
+      "Java quiz with concept, output, and scenario-based MCQs.",
     durationMinutes: QUIZ_DURATION_MINUTES,
     questionBank: buildJavaQuestionBank(),
   },
@@ -573,7 +573,7 @@ export const quizPrograms: QuizProgram[] = [
     slug: "python-programming",
     title: "Python Programming Quiz",
     description:
-      "GFG-style original Python quiz with output, syntax, and scenario-based MCQs.",
+      "Python quiz with output, syntax, and scenario-based MCQs.",
     durationMinutes: QUIZ_DURATION_MINUTES,
     questionBank: buildPythonQuestionBank(),
   },
@@ -581,7 +581,7 @@ export const quizPrograms: QuizProgram[] = [
     slug: "go-programming",
     title: "Go Programming Quiz",
     description:
-      "GFG-style original Go quiz with concurrency, pointers, and idiomatic pattern MCQs.",
+      "Go quiz with concurrency, pointers, and idiomatic pattern MCQs.",
     durationMinutes: QUIZ_DURATION_MINUTES,
     questionBank: buildGoQuestionBank(),
   },
@@ -589,7 +589,7 @@ export const quizPrograms: QuizProgram[] = [
     slug: "cpp-programming",
     title: "C++ Programming Quiz",
     description:
-      "GFG-style original C++ quiz with STL, OOP, memory, and output-based MCQs.",
+      "C++ quiz with STL, OOP, memory, and output-based MCQs.",
     durationMinutes: QUIZ_DURATION_MINUTES,
     questionBank: buildCppQuestionBank(),
   },
@@ -597,7 +597,7 @@ export const quizPrograms: QuizProgram[] = [
     slug: "javascript-programming",
     title: "JavaScript Programming Quiz",
     description:
-      "GFG-style original JavaScript quiz with async, closures, and output-tracing MCQs.",
+      "JavaScript quiz with async, closures, and output-tracing MCQs.",
     durationMinutes: QUIZ_DURATION_MINUTES,
     questionBank: buildJavaScriptQuestionBank(),
   },
@@ -605,7 +605,7 @@ export const quizPrograms: QuizProgram[] = [
     slug: "csharp-programming",
     title: "C# Programming Quiz",
     description:
-      "GFG-style original C# quiz with .NET, LINQ, OOP, and output-based MCQs.",
+      "C# quiz with .NET, LINQ, OOP, and output-based MCQs.",
     durationMinutes: QUIZ_DURATION_MINUTES,
     questionBank: buildCSharpQuestionBank(),
   },
@@ -613,7 +613,7 @@ export const quizPrograms: QuizProgram[] = [
     slug: "rust-programming",
     title: "Rust Programming Quiz",
     description:
-      "GFG-style original Rust quiz with ownership, traits, and systems reasoning MCQs.",
+      "Rust quiz with ownership, traits, and systems reasoning MCQs.",
     durationMinutes: QUIZ_DURATION_MINUTES,
     questionBank: buildRustQuestionBank(),
   },
