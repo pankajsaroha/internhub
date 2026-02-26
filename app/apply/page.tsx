@@ -1,22 +1,9 @@
 "use client";
 export const dynamic = "force-dynamic";
 
+import ApplyForm from "@/components/ApplyForm";
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-
-const BASE_FORM_URL =
-    "https://docs.google.com/forms/d/e/1FAIpQLSefCu9swRQfPpfrX-ngxU6oMq_d6tXvrSnPTDyY3QcUSWAe0Q/viewform";
-
-const PROGRAM_MAP: Record<string, string> = {
-    "backend-development": "Backend Development",
-    "frontend-development": "Frontend Development",
-    "full-stack-development": "Full Stack Development",
-    "java-programming": "Java Programming",
-    "python-programming": "Python Programming",
-    "go-programming": "Go Programming",
-};
-
-const ENTRY_ID = "entry.2005620554";
 
 /**
  * Inner client component that uses useSearchParams
@@ -24,19 +11,12 @@ const ENTRY_ID = "entry.2005620554";
  */
 function ApplyContent() {
     const searchParams = useSearchParams();
-    const slug = searchParams.get("program");
-
-    const formUrl =
-        slug && PROGRAM_MAP[slug]
-            ? `${BASE_FORM_URL}?usp=pp_url&${ENTRY_ID}=${encodeURIComponent(
-                PROGRAM_MAP[slug]
-            )}`
-            : BASE_FORM_URL;
+    const slug = searchParams.get("program") || undefined;
 
     return (
         <section className="page-container">
             {/* HEADER */}
-            <header className="apply-header">
+            <header className="apply-header" data-aos="fade-down">
                 <h1>Apply to Inzivoo</h1>
                 <p>
                     Inzivoo offers structured, project-based learning programs.
@@ -52,15 +32,7 @@ function ApplyContent() {
 
             {/* FORM */}
             <div className="apply-form-wrapper">
-                <iframe
-                    key={formUrl}
-                    src={formUrl}
-                    width="100%"
-                    height="1400"
-                    frameBorder="0"
-                >
-                    Loading…
-                </iframe>
+                <ApplyForm initialProgram={slug} />
             </div>
         </section>
     );
