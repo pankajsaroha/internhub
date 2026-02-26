@@ -97,10 +97,30 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
         if (!validate()) return;
 
         setIsSubmitting(true);
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-        setIsSubmitting(false);
-        setIsSuccess(true);
+        setErrors({});
+
+        try {
+            const response = await fetch("/api/apply", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || "Failed to submit application");
+            }
+
+            setIsSuccess(true);
+        } catch (err: any) {
+            console.error("Submission error:", err);
+            setErrors({ full_name: err.message || "Something went wrong. Please try again." });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (isSuccess) {
