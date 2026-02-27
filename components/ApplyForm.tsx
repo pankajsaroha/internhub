@@ -78,10 +78,10 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
                     newErrors.student_year = "Year must be between 1 and 4";
                 }
             }
-        } else if (formData.applicant_type === "WORKING_PROFESSIONAL") {
-            if (!formData.experience_level) {
-                newErrors.experience_level = "Years of experience is required";
-            }
+        }
+
+        if (!formData.experience_level) {
+            newErrors.experience_level = "Experience level is required";
         }
 
         if (!formData.agreed_to_terms) {
@@ -224,23 +224,24 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
                     </div>
                 )}
 
-                {/* Experience Level - Conditional for WORKING PROFESSIONALS */}
-                {formData.applicant_type === "WORKING_PROFESSIONAL" && (
-                    <div className="form-group animate-slide">
-                        <label htmlFor="experience_level">Years of Experience</label>
-                        <input
-                            type="number"
-                            id="experience_level"
-                            name="experience_level"
-                            value={formData.experience_level}
-                            onChange={handleChange}
-                            placeholder="e.g. 2"
-                            min="0"
-                            className={errors.experience_level ? "error" : ""}
-                        />
-                        {errors.experience_level && <span className="error-text">{errors.experience_level}</span>}
-                    </div>
-                )}
+                {/* Experience Level - Now for ALL applicants */}
+                <div className="form-group">
+                    <label htmlFor="experience_level">Experience Level</label>
+                    <select
+                        id="experience_level"
+                        name="experience_level"
+                        value={formData.experience_level}
+                        onChange={handleChange}
+                        className={errors.experience_level ? "error" : ""}
+                    >
+                        <option value="">Select experience level</option>
+                        <option value="No prior experience">No prior experience</option>
+                        <option value="Basic Understanding">Basic Understanding</option>
+                        <option value="Built Small Projects">Built Small Projects</option>
+                        <option value="Production level">Production level</option>
+                    </select>
+                    {errors.experience_level && <span className="error-text">{errors.experience_level}</span>}
+                </div>
             </div>
 
             {/* Terms Agreement */}
