@@ -2,6 +2,7 @@ import "./globals.css";
 import "aos/dist/aos.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import AOSInit from "@/components/AOSInit";
 
 export const metadata = {
   title: "Inzivoo | Project-Based Training & Certification",
@@ -30,6 +31,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        <AOSInit />
       </body>
     </html>
   );
