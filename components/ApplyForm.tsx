@@ -36,6 +36,13 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
         agreed_to_terms: false,
     });
 
+    // Update program if prop changes (e.g. after hydration/suspense)
+    React.useEffect(() => {
+        if (initialProgram) {
+            setFormData(prev => ({ ...prev, program: initialProgram }));
+        }
+    }, [initialProgram]);
+
     const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -139,7 +146,7 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
     }
 
     return (
-        <form className="premium-form" onSubmit={handleSubmit} data-aos="fade-up">
+        <form className="premium-form" onSubmit={handleSubmit} data-aos="fade-up" suppressHydrationWarning={true}>
             <div className="form-grid">
                 {/* Full Name */}
                 <div className="form-group">

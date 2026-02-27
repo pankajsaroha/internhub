@@ -2,7 +2,7 @@
 export const dynamic = "force-dynamic";
 
 import ApplyForm from "@/components/ApplyForm";
-import { Suspense } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 
 /**
@@ -16,7 +16,7 @@ function ApplyContent() {
     return (
         <section className="page-container">
             {/* HEADER */}
-            <header className="apply-header" data-aos="fade-down">
+            <header className="apply-header" data-aos="fade-down" suppressHydrationWarning={true}>
                 <h1>Apply to Inzivoo</h1>
                 <p>
                     Inzivoo offers structured, project-based learning programs.
@@ -40,7 +40,7 @@ function ApplyContent() {
 
 export default function ApplyPage() {
     return (
-        <Suspense fallback={<div />}>
+        <Suspense fallback={<div>Loading...</div>}>
             <ApplyContent />
         </Suspense>
     );
