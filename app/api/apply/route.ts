@@ -35,7 +35,7 @@ export async function POST(req: Request) {
                 program,
                 applicant_type,
                 student_year: student_year ? parseInt(student_year) : null,
-                experience_level: experience_level || "0", // Default to "0" if empty for professionals
+                experience_level,
                 agreed_to_terms,
                 application_status: "APPLIED" // Default status
             })
