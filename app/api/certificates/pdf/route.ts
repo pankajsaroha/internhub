@@ -1,8 +1,13 @@
 import { launchBrowser } from "@/lib/puppeteer-utils"
 import { NextResponse } from "next/server"
 
-export async function POST(req: Request) {
-    const { certificateId } = await req.json()
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url)
+    const certificateId = searchParams.get("id")
+
+    if (!certificateId) {
+        return NextResponse.json({ error: "Missing certificate ID" }, { status: 400 })
+    }
 
     const browser = await launchBrowser()
     const page = await browser.newPage()
@@ -23,7 +28,7 @@ export async function POST(req: Request) {
     return new NextResponse(buffer, {
         headers: {
             "Content-Type": "application/pdf",
-            "Content-Disposition": "attachment; filename=certificate.pdf"
+            "Content-Disposition": `attachment; filename=certificate_${certificateId}.pdf`
         }
     })
 }

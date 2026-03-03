@@ -79,11 +79,6 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
         if (formData.applicant_type === "STUDENT") {
             if (!formData.student_year) {
                 newErrors.student_year = "Year of study is required";
-            } else {
-                const year = parseInt(formData.student_year);
-                if (isNaN(year) || year < 1 || year > 4) {
-                    newErrors.student_year = "Year must be between 1 and 4";
-                }
             }
         }
 
@@ -222,9 +217,7 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
                             name="student_year"
                             value={formData.student_year}
                             onChange={handleChange}
-                            placeholder="1-4"
-                            min="1"
-                            max="4"
+                            placeholder="Current year (e.g. 3)"
                             className={errors.student_year ? "error" : ""}
                         />
                         {errors.student_year && <span className="error-text">{errors.student_year}</span>}

@@ -17,6 +17,7 @@ export default function Footer() {
                     <h4>Quick Links</h4>
                     <ul>
                         <li><Link href="/">Home</Link></li>
+                        <li><Link href="/how-it-works">How It Works</Link></li>
                         <li><Link href="/about">About Us</Link></li>
                         <li><Link href="/terms">Terms & Conditions</Link></li>
                         <li><Link href="/privacy">Privacy Policy</Link></li>
