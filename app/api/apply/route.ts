@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { getAssignmentCriteria, selectRandomProjects } from "@/lib/projects/utils";
+import { generateProjectPDF, sendAssignmentEmail } from "@/lib/email-utils";
 
 export const runtime = "nodejs";
 
@@ -21,13 +23,13 @@ export async function POST(req: Request) {
             agreed_to_terms
         } = body;
 
-        // Map UI fields to database fields
-        // applicant_type is already STUDENT / WORKING_PROFESSIONAL
-        // student_year is integer or null
-        // experience_level is string (even if user enters numbers)
-        // assigned_track is optional, we don't have it in form currently but user included it in SQL
+        // 1. Select Projects
+        const criteria = getAssignmentCriteria(applicant_type, experience_level, program);
+        const assignedProjects = selectRandomProjects(criteria.category, criteria.experience, 2);
+        const assignedProjectIds = assignedProjects.map(p => p.id).join(", ");
 
-        const { data, error } = await supabase
+        // 2. Initial Insertion with APPLIED status
+        const { data: insertData, error: insertError } = await supabase
             .from("applications")
             .insert({
                 full_name,
@@ -37,16 +39,36 @@ export async function POST(req: Request) {
                 student_year: student_year ? parseInt(student_year) : null,
                 experience_level,
                 agreed_to_terms,
-                application_status: "APPLIED" // Default status
+                assigned_track: assignedProjectIds,
+                application_status: "APPLIED"
             })
-            .select();
+            .select()
+            .single();
 
-        if (error) {
-            console.error("Supabase Error:", error);
-            return NextResponse.json({ error: error.message }, { status: 500 });
+        if (insertError) {
+            console.error("Supabase Insert Error:", insertError);
+            return NextResponse.json({ error: insertError.message }, { status: 500 });
         }
 
-        return NextResponse.json({ success: true, data });
+        // 3. Background: Generate PDF and Send Email (non-blocking for fast UI response)
+        // We trigger this without 'await' so the response can be sent immediately
+        (async () => {
+            try {
+                const pdfBuffer = await generateProjectPDF(assignedProjects);
+                await sendAssignmentEmail(email, full_name, pdfBuffer);
+
+                // 4. Update status to ASSIGNED
+                await supabase
+                    .from("applications")
+                    .update({ application_status: "ASSIGNED" })
+                    .eq("id", insertData.id);
+            } catch (emailErr) {
+                console.error("Background Email/PDF process failed:", emailErr);
+            }
+        })();
+
+        // 5. Respond immediately to show success popup
+        return NextResponse.json({ success: true, data: insertData });
     } catch (err: any) {
         console.error("API Error:", err);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
