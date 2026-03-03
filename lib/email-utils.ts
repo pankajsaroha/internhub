@@ -1,4 +1,5 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 import fs from 'fs';
 import path from 'path';
 import { Project } from './projects/registry';
@@ -80,10 +81,45 @@ export async function generateProjectPDF(projects: Project[]): Promise<Buffer> {
         </html>
     `;
 
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    // 3. Launch Browser based on environment
+    let browser;
+    const isWindows = process.platform === 'win32';
+
+    if (isWindows) {
+        // Local Windows Development: Search for local Chrome/Edge
+        const possiblePaths = [
+            'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+            'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+            'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+            'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
+        ];
+
+        let executablePath = '';
+        for (const p of possiblePaths) {
+            if (fs.existsSync(p)) {
+                executablePath = p;
+                break;
+            }
+        }
+
+        if (!executablePath) {
+            throw new Error("Could not find a local Chrome or Edge installation for PDF generation.");
+        }
+
+        browser = await puppeteer.launch({
+            executablePath,
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+    } else {
+        // Production (Vercel/Linux): Use @sparticuz/chromium
+        browser = await puppeteer.launch({
+            args: chromium.args,
+            defaultViewport: chromium.defaultViewport,
+            executablePath: await chromium.executablePath(),
+            headless: (chromium.headless as unknown) === "new" ? true : (chromium.headless as boolean | "shell"),
+        });
+    }
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });
