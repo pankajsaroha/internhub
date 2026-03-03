@@ -1,10 +1,10 @@
-import puppeteer from "puppeteer"
+import { launchBrowser } from "@/lib/puppeteer-utils"
 import { NextResponse } from "next/server"
 
 export async function POST(req: Request) {
     const { certificateId } = await req.json()
 
-    const browser = await puppeteer.launch()
+    const browser = await launchBrowser()
     const page = await browser.newPage()
 
     await page.goto(

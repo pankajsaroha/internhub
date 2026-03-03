@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import { launchBrowser } from './puppeteer-utils';
 import fs from 'fs';
 import path from 'path';
 import { Project } from './projects/registry';
@@ -80,10 +80,8 @@ export async function generateProjectPDF(projects: Project[]): Promise<Buffer> {
         </html>
     `;
 
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+    // 3. Launch Browser using shared utility
+    const browser = await launchBrowser();
 
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'networkidle0' });

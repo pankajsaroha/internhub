@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getAssignmentCriteria, selectRandomProjects } from "@/lib/projects/utils";
 import { generateProjectPDF, sendAssignmentEmail } from "@/lib/email-utils";
@@ -50,9 +50,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: insertError.message }, { status: 500 });
         }
 
-        // 3. Background: Generate PDF and Send Email (non-blocking for fast UI response)
-        // We trigger this without 'await' so the response can be sent immediately
-        (async () => {
+        // 3. Deferred: Generate PDF and Send Email (non-blocking for fast UI response)
+        // Using 'after' ensures the response is sent immediately to the user 
+        // while the heavy work continued in the background.
+        after(async () => {
             try {
                 const pdfBuffer = await generateProjectPDF(assignedProjects);
                 await sendAssignmentEmail(email, full_name, pdfBuffer);
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
             } catch (emailErr) {
                 console.error("Background Email/PDF process failed:", emailErr);
             }
-        })();
+        });
 
         // 5. Respond immediately to show success popup
         return NextResponse.json({ success: true, data: insertData });
