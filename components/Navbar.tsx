@@ -3,10 +3,29 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+import { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
     const navbarRef = useRef<HTMLElement | null>(null);
+    const router = useRouter();
+
+    useEffect(() => {
+        // Initial session check
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setUser(session?.user ?? null);
+        });
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
 
     useEffect(() => {
         if (!isMenuOpen) {
@@ -32,6 +51,13 @@ export default function Navbar() {
         };
     }, [isMenuOpen]);
 
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        setIsMenuOpen(false);
+        router.push("/");
+        router.refresh();
+    };
+
     return (
         <header className="navbar" ref={navbarRef}>
             <Link href="/" className="logo">
@@ -42,7 +68,7 @@ export default function Navbar() {
                     height={30}
                     priority
                     className="brand-logo-image"
-                />  
+                />
             </Link>
 
             <button
@@ -61,8 +87,16 @@ export default function Navbar() {
                 <Link href="/" onClick={() => setIsMenuOpen(false)}>Home</Link>
                 <Link href="/quiz" onClick={() => setIsMenuOpen(false)}>Quizzes</Link>
                 <Link href="/programs" onClick={() => setIsMenuOpen(false)}>Programs</Link>
-                <Link href="/how-it-works" onClick={() => setIsMenuOpen(false)}>How It Works</Link>
-                <Link href="/contact" onClick={() => setIsMenuOpen(false)}>Contact</Link>
+
+                {user ? (
+                    <>
+                        <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                        <button onClick={handleLogout} className="nav-logout-btn">Logout</button>
+                    </>
+                ) : (
+                    <Link href="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
+                )}
+
                 <Link href="/apply" className="btn-primary" onClick={() => setIsMenuOpen(false)}>Apply Now</Link>
             </nav>
         </header>
