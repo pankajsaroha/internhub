@@ -139,7 +139,7 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
                     </svg>
                 </div>
                 <h3>Application Received!</h3>
-                <p>Thank you for applying to Inzivoo. We will review your application and get back to you soon.</p>
+                <p>Thank you for applying to Inzivoo. We have sent an email to your provided address with your <strong>assigned projects</strong> and further instructions. Please check your inbox (and spam folder) shortly.</p>
                 <button onClick={() => setIsSuccess(false)} className="btn-primary">Apply for another program</button>
             </div>
         );
