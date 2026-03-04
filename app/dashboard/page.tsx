@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Script from "next/script";
 
 interface Application {
     id: string;
@@ -133,6 +134,60 @@ export default function DashboardPage() {
         router.refresh();
     };
 
+    const handlePayment = async (cert: Certificate) => {
+        const res = await loadRazorpay();
+        if (!res) {
+            alert("Razorpay SDK failed to load. Are you online?");
+            return;
+        }
+
+        const options = {
+            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+            amount: 49900, // Amount in paise (499 INR)
+            currency: "INR",
+            name: "Inzivoo",
+            description: `Payment for ${cert.program} Certificate`,
+            image: "/logo.png",
+            handler: async (response: any) => {
+                if (response.razorpay_payment_id) {
+                    setIsLoading(true);
+                    const { error } = await supabase
+                        .from("certificates")
+                        .update({ payment_status: "PAID" })
+                        .eq("certificate_id", cert.certificate_id);
+
+                    if (error) {
+                        alert("Payment successful but database update failed. Please contact support.");
+                    } else {
+                        // Refresh to show download button
+                        if (user) fetchData(user.email);
+                    }
+                    setIsLoading(false);
+                }
+            },
+            prefill: {
+                name: user?.email?.split('@')[0],
+                email: user?.email,
+            },
+            theme: {
+                color: "#3b82f6",
+            },
+        };
+
+        const paymentObject = new (window as any).Razorpay(options);
+        paymentObject.open();
+    };
+
+    const loadRazorpay = () => {
+        return new Promise((resolve) => {
+            const script = document.createElement("script");
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
     if (isLoading) {
         return (
             <div className="loading-state">
@@ -244,13 +299,18 @@ export default function DashboardPage() {
                                                 <div className="card-actions">
                                                     {cert.payment_status === "PAID" ? (
                                                         <button
-                                                            className="btn-link"
+                                                            className="btn-primary-small"
                                                             onClick={() => window.open(`/api/certificates/pdf?id=${cert.certificate_id}`, '_blank')}
                                                         >
-                                                            Download PDF
+                                                            Download Certificate
                                                         </button>
                                                     ) : (
-                                                        <button className="btn-primary-small">Pay & Download</button>
+                                                        <button
+                                                            className="btn-primary-small"
+                                                            onClick={() => handlePayment(cert)}
+                                                        >
+                                                            Pay & Download
+                                                        </button>
                                                     )}
                                                 </div>
                                             </div>

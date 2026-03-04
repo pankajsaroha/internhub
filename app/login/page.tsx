@@ -46,14 +46,14 @@ export default function LoginPage() {
 
         if (error) {
             setMessage({ type: "error", text: error.message });
+            setIsLoading(false);
         } else {
-            setMessage({ type: "success", text: "Login successful! Redirecting..." });
+            // Keep isLoading true during redirect to keep button state
             setTimeout(() => {
                 router.push("/dashboard");
                 router.refresh();
-            }, 1500);
+            }, 1000);
         }
-        setIsLoading(false);
     };
 
     return (

@@ -12,7 +12,7 @@ const supabase = createClient(
 export async function POST(req: Request) {
     const { name, program, email } = await req.json()
 
-    const certificateId = "INZ-" + randomUUID().slice(0, 8)
+    const certificateId = "INZ-" + randomUUID().slice(0, 8).toUpperCase()
 
     const { error } = await supabase.from("certificates").insert({
         certificate_id: certificateId,
