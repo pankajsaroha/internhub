@@ -60,7 +60,7 @@ export default function CertificateTemplate({
                     </div>
 
                     <QRCodeSVG
-                        value={`${BASE_URL}/verify/${certificateId}`}
+                        value={`${BASE_URL}/certificate/${certificateId}`}
                         size={90}
                     />
                 </div>

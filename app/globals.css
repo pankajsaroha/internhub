@@ -2782,3 +2782,41 @@ li {
 .btn-link:hover {
   text-decoration: underline;
 }
+
+@media print {
+
+  .navbar,
+  footer,
+  .dashboard-nav,
+  .dashboard-actions {
+    display: none !important;
+  }
+
+  body {
+    background: white !important;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+  }
+
+  /* Target the certificate specifically */
+  [class*="certificate_wrapper"] {
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  [class*="certificate_certificate"] {
+    width: 100% !important;
+    height: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    page-break-inside: avoid;
+  }
+}
