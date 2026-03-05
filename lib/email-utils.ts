@@ -161,6 +161,7 @@ export async function generateProjectPDF(projects: Project[]): Promise<Buffer> {
                 .summary h2 { color: #475569; font-size: 18px; margin-top: 0; }
                 .summary ul { margin: 10px 0 0 20px; padding: 0; }
                 .summary li { color: #64748b; font-weight: 600; margin-bottom: 5px; }
+                .mandatory-note { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: #fff7ed; border: 1px solid #fdba74; color: #9a3412; font-weight: 700; font-size: 13px; }
                 .explain-grid { margin: 24px 0 28px 0; display: grid; grid-template-columns: 1fr; gap: 12px; }
                 .explain-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; background: #ffffff; }
                 .explain-card h3 { margin: 0 0 8px 0; color: #1e293b; font-size: 16px; }
@@ -190,6 +191,9 @@ export async function generateProjectPDF(projects: Project[]): Promise<Buffer> {
                 <ul>
                     ${projects.map(p => `<li>${p.title}</li>`).join('')}
                 </ul>
+                <div class="mandatory-note">
+                    Important: You must complete at least 1 assigned project. You may refer to the project guideline for better understanding and guidance.
+                </div>
             </div>
 
             <div class="explain-grid">
@@ -238,9 +242,11 @@ export async function sendAssignmentEmail(to: string, name: string, pdfBuffer: B
                     <h2 style="color: #4f46e5;">Welcome to Inzivoo, ${name}!</h2>
                     <p>We've received your application and carefully reviewed your profile.</p>
                     <p>Attached to this email, you will find a PDF containing your <strong>assigned projects</strong>. These projects are selected to match your experience level and chosen track.</p>
+                    <p><strong>Important:</strong> You must complete at least 1 assigned project.</p>
                     <p><strong>Next Steps:</strong></p>
                     <ul>
                         <li>Open the attached PDF to review the project details.</li>
+                        <li> You may refer to the project guideline for better understanding and guidance.</li>
                         <li>Follow the implementation guide provided for each project.</li>
                         <li>Submit your work within the requested timeline.</li>
                     </ul>
