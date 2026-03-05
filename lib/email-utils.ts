@@ -3,39 +3,151 @@ import fs from 'fs';
 import path from 'path';
 import { Project } from './projects/registry';
 
+function extractMarkdownSection(md: string, heading: string): string {
+    const escaped = heading.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const regex = new RegExp(`##\\s+${escaped}\\s*\\n([\\s\\S]*?)(?=\\n##\\s+|$)`, "i");
+    const match = md.match(regex);
+    if (!match) return "";
+    return match[1]
+        .split(/\r?\n/)
+        .map((line) => line.trim().replace(/^\-\s*/, ""))
+        .filter((line) => line && !line.startsWith("```") && !line.startsWith("### "))
+        .join(" ")
+        .trim();
+}
+
 /**
- * Simple markdown to HTML converter for PDF styling.
+ * Simple markdown to HTML converter for PDF styling with fenced code support.
  */
 function simpleMarkdownToHtml(md: string): string {
-    return md
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/^\- (.*$)/gim, '<li>$1</li>')
-        .replace(/\n\n/g, '</p><p>')
-        .replace(/<li>(.*?)<\/li>/g, '<ul><li>$1</li></ul>')
-        .replace(/<\/ul><ul>/g, '') // Merge adjacent lists
-        .replace(/\n/g, '<br>');
+    const escapeHtml = (text: string): string =>
+        text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+
+    const formatInline = (text: string): string => {
+        return escapeHtml(text).replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+    };
+
+    const codeBlocks: string[] = [];
+    const withCodePlaceholders = md.replace(/```([a-zA-Z0-9_-]+)?\n([\s\S]*?)```/g, (_, lang = "", code = "") => {
+        const token = `@@CODE_BLOCK_${codeBlocks.length}@@`;
+        codeBlocks.push(
+            `<pre class="code-block"><code data-lang="${escapeHtml(lang)}">${escapeHtml(code.trim())}</code></pre>`
+        );
+        return token;
+    });
+
+    const lines = withCodePlaceholders.split(/\r?\n/);
+    let html = "";
+    let inList = false;
+    let paragraphBuffer: string[] = [];
+
+    const flushParagraph = () => {
+        if (paragraphBuffer.length > 0) {
+            html += `<p>${paragraphBuffer.join(" ")}</p>`;
+            paragraphBuffer = [];
+        }
+    };
+
+    const closeList = () => {
+        if (inList) {
+            html += "</ul>";
+            inList = false;
+        }
+    };
+
+    for (const rawLine of lines) {
+        const line = rawLine.trim();
+
+        if (!line) {
+            flushParagraph();
+            closeList();
+            continue;
+        }
+
+        const codeMatch = line.match(/^@@CODE_BLOCK_(\d+)@@$/);
+        if (codeMatch) {
+            flushParagraph();
+            closeList();
+            html += codeBlocks[Number(codeMatch[1])] || "";
+            continue;
+        }
+
+        if (line.startsWith("### ")) {
+            flushParagraph();
+            closeList();
+            html += `<h3>${formatInline(line.slice(4))}</h3>`;
+            continue;
+        }
+
+        if (line.startsWith("## ")) {
+            flushParagraph();
+            closeList();
+            html += `<h2>${formatInline(line.slice(3))}</h2>`;
+            continue;
+        }
+
+        if (line.startsWith("# ")) {
+            flushParagraph();
+            closeList();
+            html += `<h1>${formatInline(line.slice(2))}</h1>`;
+            continue;
+        }
+
+        if (line.startsWith("- ")) {
+            flushParagraph();
+            if (!inList) {
+                html += "<ul>";
+                inList = true;
+            }
+            html += `<li>${formatInline(line.slice(2))}</li>`;
+            continue;
+        }
+
+        closeList();
+        paragraphBuffer.push(formatInline(line));
+    }
+
+    flushParagraph();
+    closeList();
+    return html;
 }
 
 /**
  * Generates a PDF buffer containing the details of assigned projects.
  */
 export async function generateProjectPDF(projects: Project[]): Promise<Buffer> {
-    const projectSections = await Promise.all(projects.map(async (p) => {
+    const projectDetails = await Promise.all(projects.map(async (p) => {
         const fullPath = path.join(process.cwd(), 'lib/projects', p.filePath);
         const mdContent = fs.readFileSync(fullPath, 'utf8');
         const htmlContent = simpleMarkdownToHtml(mdContent);
+        const objective = extractMarkdownSection(mdContent, "Objective");
+        const requirements = extractMarkdownSection(mdContent, "Core Requirements");
+        const implementation = extractMarkdownSection(mdContent, "Implementation Guide");
 
-        return `
+        const sectionHtml = `
             <div class="project-section">
                 <h2 class="project-title-header">${p.title}</h2>
                 <div class="project-body">${htmlContent}</div>
             </div>
             ${projects.indexOf(p) < projects.length - 1 ? '<div class="page-break"></div>' : ''}
         `;
+        return { title: p.title, objective, requirements, implementation, sectionHtml };
     }));
+
+    const projectSections = projectDetails.map((d) => d.sectionHtml);
+    const projectExplanations = projectDetails.map((d) => `
+        <div class="explain-card">
+            <h3>${d.title}</h3>
+            <p><strong>What you will build:</strong> ${d.objective || "Project details are provided in the full section below."}</p>
+            <p><strong>Why this project:</strong> ${d.requirements || "It matches your experience level and helps you practice implementation skills."}</p>
+            <p><strong>How to approach:</strong> ${d.implementation || "Follow the implementation guide and code snippets provided in the detailed section."}</p>
+        </div>
+    `).join("");
 
     const html = `
         <!DOCTYPE html>
@@ -49,6 +161,10 @@ export async function generateProjectPDF(projects: Project[]): Promise<Buffer> {
                 .summary h2 { color: #475569; font-size: 18px; margin-top: 0; }
                 .summary ul { margin: 10px 0 0 20px; padding: 0; }
                 .summary li { color: #64748b; font-weight: 600; margin-bottom: 5px; }
+                .explain-grid { margin: 24px 0 28px 0; display: grid; grid-template-columns: 1fr; gap: 12px; }
+                .explain-card { border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px 16px; background: #ffffff; }
+                .explain-card h3 { margin: 0 0 8px 0; color: #1e293b; font-size: 16px; }
+                .explain-card p { margin: 6px 0; font-size: 13px; color: #334155; }
                 .project-section { margin-top: 20px; }
                 .project-title-header { color: #ffffff; background: #4f46e5; padding: 12px 20px; border-radius: 8px; font-size: 22px; margin-bottom: 20px; }
                 .project-body { padding: 0 10px; }
@@ -56,6 +172,7 @@ export async function generateProjectPDF(projects: Project[]): Promise<Buffer> {
                 h3 { color: #334155; margin-top: 20px; font-size: 18px; }
                 p { margin-bottom: 15px; }
                 li { margin-bottom: 8px; }
+                .code-block { background: #0f172a; color: #e2e8f0; padding: 14px; border-radius: 8px; overflow-x: auto; font-size: 12px; line-height: 1.45; }
                 .page-break { page-break-after: always; }
                 @media print {
                     body { padding: 0; }
@@ -73,6 +190,10 @@ export async function generateProjectPDF(projects: Project[]): Promise<Buffer> {
                 <ul>
                     ${projects.map(p => `<li>${p.title}</li>`).join('')}
                 </ul>
+            </div>
+
+            <div class="explain-grid">
+                ${projectExplanations}
             </div>
             
             ${projectSections.join('')}

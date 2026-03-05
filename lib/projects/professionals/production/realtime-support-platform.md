@@ -1,79 +1,65 @@
-# Basic Task Manager
+# Realtime Support Platform
 
 ## Objective
-Create a simple productivity app where users can manage tasks with create, update, complete, and delete operations.
+Build a fullstack customer support platform with live chat, ticket conversion, and agent analytics.
 
 ## Core Requirements
-- Add tasks with title and optional description.
-- Edit existing tasks.
-- Mark tasks complete/incomplete.
-- Delete tasks.
-- Persist tasks in local storage or small database.
-- Filter tasks by all/active/completed.
+- Realtime customer-agent chat.
+- Convert chats into support tickets.
+- Ticket status workflow and SLA timers.
+- Agent assignment and load balancing.
+- Dashboard for response/resolution metrics.
 
 ## Suggested Architecture
-- UI layer for task list and controls.
-- State layer for task updates and filtering.
-- Storage layer for persistence.
+- Realtime gateway (WebSocket).
+- Ticketing backend and relational database.
+- Notification service for assignments and SLA breaches.
 
 ## Data Model
-- `id`
-- `title`
-- `description`
-- `status` (`ACTIVE` | `COMPLETED`)
-- `created_at`
-- `updated_at`
+- `users`, `agents`, `chat_sessions`, `messages`, `tickets`, `sla_events`
 
 ## Implementation Guide
-1. Build controlled form for task creation.
-2. Create state reducer for add/edit/delete/toggle.
-3. Add filtered list view.
-4. Persist list in local storage.
-5. Add validation and empty states.
+1. Build chat room lifecycle.
+2. Store and stream messages reliably.
+3. Add ticket creation from chat transcript.
+4. Implement SLA policies and reminders.
+5. Build analytics dashboard for ops team.
 
 ## Code Snippets
 ```ts
-type Task = {
-  id: string;
-  title: string;
-  done: boolean;
-};
+io.on("connection", (socket) => {
+  socket.on("join-session", (sessionId: string) => {
+    socket.join(sessionId);
+  });
+
+  socket.on("send-message", async (payload) => {
+    await saveMessage(payload);
+    io.to(payload.sessionId).emit("new-message", payload);
+  });
+});
 ```
 
 ```ts
-const activeTasks = tasks.filter((task) => !task.done);
-const completedTasks = tasks.filter((task) => task.done);
+const remainingMins = Math.max(
+  0,
+  Math.floor((slaDueAt.getTime() - Date.now()) / 60000)
+);
 ```
 
-## Implementation Steps
-- Build task form and list UI.
-- Add local state management.
-- Implement add/edit/delete handlers.
-- Add complete toggle and filters.
-- Persist state to local storage.
-- Add empty/error state UX.
-
-## Quality Checklist
-- Handles empty input validation.
-- Keeps data after refresh.
-- Provides clear completed task styling.
-- Works on desktop and mobile.
-
 ## Deliverables
-- Deployed task manager app.
-- Source code with clear folder structure.
-- README with setup and feature notes.
+- Realtime support platform with ticketing.
+- Monitoring and SLA visibility.
 
 ## Difficulty
-Level: Easy  
-Time: 3-5 Hours
+Level: Expert  
+Time: 28-45 Hours
 
 ## Stack-Specific IDE Snippets
 
 ### React (Frontend)
 
 ```tsx
-// Task Manager - React starter snippet
+// Realtime Support Platform - React starter snippet
 import { useEffect, useState } from "react";
 
 type ProjectItem = {
@@ -93,7 +79,7 @@ export default function ProjectPage() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
+      <h1>Realtime Support Platform</h1>
       <ul>
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
@@ -107,7 +93,7 @@ export default function ProjectPage() {
 ### Django (Backend)
 
 ```python
-# Task Manager - Django model + API view snippet
+# Realtime Support Platform - Django model + API view snippet
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -126,7 +112,7 @@ def list_items(request):
 ### Spring Boot (Backend)
 
 ```java
-// Task Manager - Spring Boot entity + REST endpoint snippet
+// Realtime Support Platform - Spring Boot entity + REST endpoint snippet
 @Entity
 public class ProjectItem {
     @Id

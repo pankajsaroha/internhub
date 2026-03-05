@@ -1,79 +1,66 @@
-# Basic Task Manager
+# Multi-region E-commerce Platform
 
 ## Objective
-Create a simple productivity app where users can manage tasks with create, update, complete, and delete operations.
+Build a production-ready commerce platform supporting multiple regions, localized pricing, and resilient order processing.
 
 ## Core Requirements
-- Add tasks with title and optional description.
-- Edit existing tasks.
-- Mark tasks complete/incomplete.
-- Delete tasks.
-- Persist tasks in local storage or small database.
-- Filter tasks by all/active/completed.
+- Region-aware catalog, currency, and taxes.
+- Inventory sync across warehouses.
+- Checkout with payment gateway integration.
+- Order lifecycle and notifications.
+- Monitoring, retry policies, and audit logs.
 
 ## Suggested Architecture
-- UI layer for task list and controls.
-- State layer for task updates and filtering.
-- Storage layer for persistence.
+- API gateway + domain services (catalog, cart, checkout, orders).
+- Event-driven processing for order workflows.
+- Region-specific CDN and caching strategy.
 
 ## Data Model
-- `id`
-- `title`
-- `description`
-- `status` (`ACTIVE` | `COMPLETED`)
-- `created_at`
-- `updated_at`
+- `products`, `prices`, `regions`, `orders`, `order_items`, `payments`, `inventory`
 
 ## Implementation Guide
-1. Build controlled form for task creation.
-2. Create state reducer for add/edit/delete/toggle.
-3. Add filtered list view.
-4. Persist list in local storage.
-5. Add validation and empty states.
+1. Model region and pricing strategy.
+2. Build cart and checkout APIs.
+3. Integrate payment webhooks.
+4. Add inventory reservation and rollback.
+5. Add observability (metrics/traces/logs).
+6. Add CI/CD and disaster recovery checks.
 
 ## Code Snippets
 ```ts
-type Task = {
-  id: string;
-  title: string;
-  done: boolean;
-};
+function getRegionalPrice(
+  basePrice: number,
+  exchangeRate: number,
+  taxRate: number
+) {
+  const converted = basePrice * exchangeRate;
+  return Number((converted + converted * taxRate).toFixed(2));
+}
 ```
 
 ```ts
-const activeTasks = tasks.filter((task) => !task.done);
-const completedTasks = tasks.filter((task) => task.done);
+await publish("order.created", {
+  orderId,
+  tenantId,
+  region,
+  createdAt: new Date().toISOString(),
+});
 ```
 
-## Implementation Steps
-- Build task form and list UI.
-- Add local state management.
-- Implement add/edit/delete handlers.
-- Add complete toggle and filters.
-- Persist state to local storage.
-- Add empty/error state UX.
-
-## Quality Checklist
-- Handles empty input validation.
-- Keeps data after refresh.
-- Provides clear completed task styling.
-- Works on desktop and mobile.
-
 ## Deliverables
-- Deployed task manager app.
-- Source code with clear folder structure.
-- README with setup and feature notes.
+- Multi-region commerce application.
+- Infra notes for scaling and failover.
 
 ## Difficulty
-Level: Easy  
-Time: 3-5 Hours
+Level: Production  
+Time: 55-85 Hours
 
 ## Stack-Specific IDE Snippets
 
 ### React (Frontend)
 
 ```tsx
-// Task Manager - React starter snippet
+// Multi-region E-commerce Platform - React starter snippet
 import { useEffect, useState } from "react";
 
 type ProjectItem = {
@@ -93,7 +80,7 @@ export default function ProjectPage() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
+      <h1>Multi-region E-commerce Platform</h1>
       <ul>
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
@@ -107,7 +94,7 @@ export default function ProjectPage() {
 ### Django (Backend)
 
 ```python
-# Task Manager - Django model + API view snippet
+# Multi-region E-commerce Platform - Django model + API view snippet
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -126,7 +113,7 @@ def list_items(request):
 ### Spring Boot (Backend)
 
 ```java
-// Task Manager - Spring Boot entity + REST endpoint snippet
+// Multi-region E-commerce Platform - Spring Boot entity + REST endpoint snippet
 @Entity
 public class ProjectItem {
     @Id

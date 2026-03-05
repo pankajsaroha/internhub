@@ -1,79 +1,60 @@
-# Basic Task Manager
+# Learning Management Mini Platform
 
 ## Objective
-Create a simple productivity app where users can manage tasks with create, update, complete, and delete operations.
+Build a mini LMS where instructors publish lessons and students track course progress.
 
 ## Core Requirements
-- Add tasks with title and optional description.
-- Edit existing tasks.
-- Mark tasks complete/incomplete.
-- Delete tasks.
-- Persist tasks in local storage or small database.
-- Filter tasks by all/active/completed.
+- Instructor creates courses and lessons.
+- Student enrolls and views lesson content.
+- Mark lessons completed and track progress.
+- Course dashboard with progress percentage.
+- Basic role-based access (`INSTRUCTOR` / `STUDENT`).
 
 ## Suggested Architecture
-- UI layer for task list and controls.
-- State layer for task updates and filtering.
-- Storage layer for persistence.
+- Auth + role middleware.
+- Course service for content and enrollment.
+- Progress tracking service.
 
 ## Data Model
-- `id`
-- `title`
-- `description`
-- `status` (`ACTIVE` | `COMPLETED`)
-- `created_at`
-- `updated_at`
+- `users`, `courses`, `lessons`, `enrollments`, `lesson_progress`
 
 ## Implementation Guide
-1. Build controlled form for task creation.
-2. Create state reducer for add/edit/delete/toggle.
-3. Add filtered list view.
-4. Persist list in local storage.
-5. Add validation and empty states.
+1. Build auth and role guards.
+2. Add course and lesson CRUD.
+3. Add enrollment flow.
+4. Track completion per lesson.
+5. Show progress dashboard and filters.
 
 ## Code Snippets
 ```ts
-type Task = {
-  id: string;
-  title: string;
-  done: boolean;
-};
+const progressPct = (completed: number, total: number) =>
+  total === 0 ? 0 : Math.round((completed / total) * 100);
 ```
 
-```ts
-const activeTasks = tasks.filter((task) => !task.done);
-const completedTasks = tasks.filter((task) => task.done);
+```sql
+CREATE TABLE lesson_progress (
+  id BIGSERIAL PRIMARY KEY,
+  user_id UUID NOT NULL,
+  lesson_id BIGINT NOT NULL,
+  completed BOOLEAN DEFAULT FALSE,
+  completed_at TIMESTAMP NULL
+);
 ```
-
-## Implementation Steps
-- Build task form and list UI.
-- Add local state management.
-- Implement add/edit/delete handlers.
-- Add complete toggle and filters.
-- Persist state to local storage.
-- Add empty/error state UX.
-
-## Quality Checklist
-- Handles empty input validation.
-- Keeps data after refresh.
-- Provides clear completed task styling.
-- Works on desktop and mobile.
 
 ## Deliverables
-- Deployed task manager app.
-- Source code with clear folder structure.
-- README with setup and feature notes.
+- LMS mini app with role-based flows.
+- Database schema + API endpoints.
 
 ## Difficulty
-Level: Easy  
-Time: 3-5 Hours
+Level: Advanced  
+Time: 12-18 Hours
 
 ## Stack-Specific IDE Snippets
 
 ### React (Frontend)
 
 ```tsx
-// Task Manager - React starter snippet
+// Learning Management Mini Platform - React starter snippet
 import { useEffect, useState } from "react";
 
 type ProjectItem = {
@@ -93,7 +74,7 @@ export default function ProjectPage() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
+      <h1>Learning Management Mini Platform</h1>
       <ul>
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
@@ -107,7 +88,7 @@ export default function ProjectPage() {
 ### Django (Backend)
 
 ```python
-# Task Manager - Django model + API view snippet
+# Learning Management Mini Platform - Django model + API view snippet
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -126,7 +107,7 @@ def list_items(request):
 ### Spring Boot (Backend)
 
 ```java
-// Task Manager - Spring Boot entity + REST endpoint snippet
+// Learning Management Mini Platform - Spring Boot entity + REST endpoint snippet
 @Entity
 public class ProjectItem {
     @Id

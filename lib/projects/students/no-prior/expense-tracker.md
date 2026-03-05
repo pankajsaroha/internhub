@@ -1,79 +1,76 @@
-# Basic Task Manager
+# Expense Tracker
 
 ## Objective
-Create a simple productivity app where users can manage tasks with create, update, complete, and delete operations.
+Build a personal expense tracker that helps users add income/expenses, classify transactions, and view balance trends.
 
 ## Core Requirements
-- Add tasks with title and optional description.
-- Edit existing tasks.
-- Mark tasks complete/incomplete.
-- Delete tasks.
-- Persist tasks in local storage or small database.
-- Filter tasks by all/active/completed.
+- Add transaction with type (`INCOME` or `EXPENSE`), amount, category, and note.
+- Edit and delete transactions.
+- Show current balance, total income, and total expense.
+- Filter by category and date range.
+- Persist data in local storage or database.
 
 ## Suggested Architecture
-- UI layer for task list and controls.
-- State layer for task updates and filtering.
-- Storage layer for persistence.
+- UI layer for forms, summary cards, and transaction table.
+- State layer for transaction calculations and filters.
+- Storage layer for persistence and recovery.
 
 ## Data Model
 - `id`
-- `title`
-- `description`
-- `status` (`ACTIVE` | `COMPLETED`)
+- `type`
+- `amount`
+- `category`
+- `note`
+- `transaction_date`
 - `created_at`
-- `updated_at`
 
 ## Implementation Guide
-1. Build controlled form for task creation.
-2. Create state reducer for add/edit/delete/toggle.
-3. Add filtered list view.
-4. Persist list in local storage.
-5. Add validation and empty states.
+1. Build transaction form and validation.
+2. Create transaction list with edit/delete actions.
+3. Add summary calculations for totals.
+4. Add category/date filters.
+5. Persist and restore data on app load.
 
 ## Code Snippets
 ```ts
-type Task = {
+type TxType = "INCOME" | "EXPENSE";
+
+interface Transaction {
   id: string;
-  title: string;
-  done: boolean;
-};
+  type: TxType;
+  amount: number;
+  category: string;
+  note?: string;
+  transactionDate: string;
+}
 ```
 
 ```ts
-const activeTasks = tasks.filter((task) => !task.done);
-const completedTasks = tasks.filter((task) => task.done);
+const totals = transactions.reduce(
+  (acc, tx) => {
+    if (tx.type === "INCOME") acc.income += tx.amount;
+    else acc.expense += tx.amount;
+    acc.balance = acc.income - acc.expense;
+    return acc;
+  },
+  { income: 0, expense: 0, balance: 0 }
+);
 ```
 
-## Implementation Steps
-- Build task form and list UI.
-- Add local state management.
-- Implement add/edit/delete handlers.
-- Add complete toggle and filters.
-- Persist state to local storage.
-- Add empty/error state UX.
-
-## Quality Checklist
-- Handles empty input validation.
-- Keeps data after refresh.
-- Provides clear completed task styling.
-- Works on desktop and mobile.
-
 ## Deliverables
-- Deployed task manager app.
-- Source code with clear folder structure.
-- README with setup and feature notes.
+- Working expense tracker app.
+- README with setup and feature checklist.
 
 ## Difficulty
 Level: Easy  
-Time: 3-5 Hours
+Time: 4-6 Hours
 
 ## Stack-Specific IDE Snippets
 
 ### React (Frontend)
 
 ```tsx
-// Task Manager - React starter snippet
+// Expense Tracker - React starter snippet
 import { useEffect, useState } from "react";
 
 type ProjectItem = {
@@ -93,7 +90,7 @@ export default function ProjectPage() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
+      <h1>Expense Tracker</h1>
       <ul>
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
@@ -107,7 +104,7 @@ export default function ProjectPage() {
 ### Django (Backend)
 
 ```python
-# Task Manager - Django model + API view snippet
+# Expense Tracker - Django model + API view snippet
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -126,7 +123,7 @@ def list_items(request):
 ### Spring Boot (Backend)
 
 ```java
-// Task Manager - Spring Boot entity + REST endpoint snippet
+// Expense Tracker - Spring Boot entity + REST endpoint snippet
 @Entity
 public class ProjectItem {
     @Id
