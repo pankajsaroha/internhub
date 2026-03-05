@@ -6,6 +6,15 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Script from "next/script";
 
+const PROGRAM_LABEL_MAP: Record<string, string> = {
+    backend: "Backend Development",
+    frontend: "Frontend Development",
+    fullstack: "Full Stack Development",
+    java: "Java Development",
+    python: "Python Development",
+    go: "Go Development",
+};
+
 interface Application {
     id: string;
     program: string;
@@ -13,6 +22,7 @@ interface Application {
     created_at: string;
     assigned_track: string;
     experience_level: string;
+    full_name?: string | null;
 }
 
 interface Certificate {
@@ -22,8 +32,14 @@ interface Certificate {
     created_at: string;
 }
 
+interface UserProfileRow {
+    name: string | null;
+}
+
 function renderProgramIcon(slug: string) {
-    switch (slug) {
+    const normalized = (slug || "").toLowerCase();
+    switch (normalized) {
+        case "frontend":
         case "frontend-development":
             return (
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -33,6 +49,7 @@ function renderProgramIcon(slug: string) {
                     <circle cx="9" cy="6" r="1" fill="#3b82f6" />
                 </svg>
             );
+        case "backend":
         case "backend-development":
             return (
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -42,6 +59,8 @@ function renderProgramIcon(slug: string) {
                     <circle cx="8" cy="13" r="1" fill="#6366f1" />
                 </svg>
             );
+        case "fullstack":
+        case "full-stack":
         case "full-stack-development":
             return (
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -50,6 +69,7 @@ function renderProgramIcon(slug: string) {
                     <path d="M4 15l8 4 8-4" stroke="#22c55e" strokeWidth="2" />
                 </svg>
             );
+        case "java":
         case "java-programming":
             return (
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -63,6 +83,7 @@ function renderProgramIcon(slug: string) {
                     />
                 </svg>
             );
+        case "python":
         case "python-programming":
             return (
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -72,6 +93,7 @@ function renderProgramIcon(slug: string) {
                     <circle cx="14" cy="18" r="1" fill="#10b981" />
                 </svg>
             );
+        case "go":
         case "go-programming":
             return (
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -87,6 +109,7 @@ function renderProgramIcon(slug: string) {
 
 export default function DashboardPage() {
     const [user, setUser] = useState<any>(null);
+    const [displayName, setDisplayName] = useState<string>("User");
     const [applications, setApplications] = useState<Application[]>([]);
     const [certificates, setCertificates] = useState<Certificate[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -101,6 +124,11 @@ export default function DashboardPage() {
                 return;
             }
             setUser(session.user);
+            const metadataName =
+                session.user.user_metadata?.full_name ||
+                session.user.user_metadata?.name ||
+                "";
+            setDisplayName(metadataName || session.user.email?.split("@")[0] || "User");
             fetchData(session.user.email!);
         };
 
@@ -109,21 +137,41 @@ export default function DashboardPage() {
 
     const fetchData = async (email: string) => {
         setIsLoading(true);
+        const normalizedEmail = (email || "").trim().toLowerCase();
+
         // Fetch Applications
         const { data: apps } = await supabase
             .from("applications")
             .select("*")
-            .eq("email", email)
+            .eq("email", normalizedEmail)
             .order("created_at", { ascending: false });
 
         // Fetch Certificates
         const { data: certs } = await supabase
             .from("certificates")
             .select("*")
-            .eq("email", email)
+            .eq("email", normalizedEmail)
             .order("created_at", { ascending: false });
 
-        setApplications(apps || []);
+        // Fetch display name from users table
+        const { data: userProfile } = await supabase
+            .from("users")
+            .select("name")
+            .eq("email", normalizedEmail)
+            .maybeSingle();
+
+        const appList = (apps as Application[]) || [];
+        setApplications(appList);
+
+        const profileName = (userProfile as UserProfileRow | null)?.name || "";
+        if (profileName.trim()) {
+            setDisplayName(profileName);
+        } else {
+            const appFullName = appList.find((a) => a.full_name)?.full_name;
+            if (appFullName) {
+                setDisplayName(appFullName);
+            }
+        }
         setCertificates(certs || []);
         setIsLoading(false);
     };
@@ -202,7 +250,7 @@ export default function DashboardPage() {
             <div className="dashboard-header">
                 <div className="container">
                     <div className="header-info">
-                        <h1>Welcome, {user?.email?.split('@')[0]}</h1>
+                        <h1>Welcome, {displayName}</h1>
                         <p>Track your learning progress and certificates</p>
                     </div>
                 </div>
@@ -248,7 +296,7 @@ export default function DashboardPage() {
                                         </div>
                                         <div className="card-content">
                                             <div className="card-top">
-                                                <h3>{app.program.replace(/-/g, ' ').toUpperCase()}</h3>
+                                                <h3>{PROGRAM_LABEL_MAP[app.program] || app.program.replace(/-/g, ' ').toUpperCase()}</h3>
                                                 <div className={`status-pill ${app.application_status.toLowerCase()}`}>
                                                     {app.application_status}
                                                 </div>

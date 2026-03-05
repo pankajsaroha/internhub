@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 const PROGRAM_MAP: Record<string, string> = {
     backend: "Backend Development",
@@ -19,6 +20,7 @@ interface FormData {
     student_year: string;
     experience_level: string;
     agreed_to_terms: boolean;
+    auth_user_id?: string | null;
 }
 
 interface ApplyFormProps {
@@ -34,6 +36,7 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
         student_year: "",
         experience_level: "",
         agreed_to_terms: false,
+        auth_user_id: null,
     });
 
     // Update program if prop changes (e.g. after hydration/suspense)
@@ -102,12 +105,19 @@ export default function ApplyForm({ initialProgram }: ApplyFormProps) {
         setErrors({});
 
         try {
+            const {
+                data: { user }
+            } = await supabase.auth.getUser();
+
             const response = await fetch("/api/apply", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({
+                    ...formData,
+                    auth_user_id: user?.id || null,
+                }),
             });
 
             const result = await response.json();
