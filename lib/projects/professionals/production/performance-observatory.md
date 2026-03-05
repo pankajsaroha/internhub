@@ -1,79 +1,61 @@
-# Basic Task Manager
+# Frontend Performance Observatory
 
 ## Objective
-Create a simple productivity app where users can manage tasks with create, update, complete, and delete operations.
+Build a frontend analytics dashboard that tracks Core Web Vitals and interaction performance across releases.
 
 ## Core Requirements
-- Add tasks with title and optional description.
-- Edit existing tasks.
-- Mark tasks complete/incomplete.
-- Delete tasks.
-- Persist tasks in local storage or small database.
-- Filter tasks by all/active/completed.
+- Collect real user metrics (LCP, CLS, INP, TTFB).
+- Compare performance by route and release version.
+- Alert when thresholds degrade.
+- Visual dashboard with trends.
 
 ## Suggested Architecture
-- UI layer for task list and controls.
-- State layer for task updates and filtering.
-- Storage layer for persistence.
-
-## Data Model
-- `id`
-- `title`
-- `description`
-- `status` (`ACTIVE` | `COMPLETED`)
-- `created_at`
-- `updated_at`
+- Client metric collector.
+- Ingestion API and storage.
+- Dashboard UI for analysis.
 
 ## Implementation Guide
-1. Build controlled form for task creation.
-2. Create state reducer for add/edit/delete/toggle.
-3. Add filtered list view.
-4. Persist list in local storage.
-5. Add validation and empty states.
+1. Add web-vitals collection in client app.
+2. Push metrics to ingestion API.
+3. Store and aggregate metrics.
+4. Build route-level performance dashboard.
+5. Add release comparison and alert rules.
 
 ## Code Snippets
 ```ts
-type Task = {
-  id: string;
-  title: string;
-  done: boolean;
-};
+import { onCLS, onINP, onLCP } from "web-vitals";
+
+const report = (metric: { name: string; value: number }) =>
+  fetch("/api/metrics", {
+    method: "POST",
+    body: JSON.stringify(metric),
+    headers: { "Content-Type": "application/json" },
+  });
+
+onCLS(report);
+onINP(report);
+onLCP(report);
 ```
 
-```ts
-const activeTasks = tasks.filter((task) => !task.done);
-const completedTasks = tasks.filter((task) => task.done);
+```sql
+CREATE INDEX idx_perf_route_release
+ON performance_metrics(route, release_version);
 ```
-
-## Implementation Steps
-- Build task form and list UI.
-- Add local state management.
-- Implement add/edit/delete handlers.
-- Add complete toggle and filters.
-- Persist state to local storage.
-- Add empty/error state UX.
-
-## Quality Checklist
-- Handles empty input validation.
-- Keeps data after refresh.
-- Provides clear completed task styling.
-- Works on desktop and mobile.
 
 ## Deliverables
-- Deployed task manager app.
-- Source code with clear folder structure.
-- README with setup and feature notes.
+- Real-user performance tracking system.
+- Dashboard with actionable insights.
 
 ## Difficulty
-Level: Easy  
-Time: 3-5 Hours
+Level: Expert  
+Time: 18-30 Hours
 
 ## Stack-Specific IDE Snippets
 
 ### React (Frontend)
 
 ```tsx
-// Task Manager - React starter snippet
+// Frontend Performance Observatory - React starter snippet
 import { useEffect, useState } from "react";
 
 type ProjectItem = {
@@ -93,7 +75,7 @@ export default function ProjectPage() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
+      <h1>Frontend Performance Observatory</h1>
       <ul>
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
@@ -107,7 +89,7 @@ export default function ProjectPage() {
 ### Django (Backend)
 
 ```python
-# Task Manager - Django model + API view snippet
+# Frontend Performance Observatory - Django model + API view snippet
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -126,7 +108,7 @@ def list_items(request):
 ### Spring Boot (Backend)
 
 ```java
-// Task Manager - Spring Boot entity + REST endpoint snippet
+// Frontend Performance Observatory - Spring Boot entity + REST endpoint snippet
 @Entity
 public class ProjectItem {
     @Id

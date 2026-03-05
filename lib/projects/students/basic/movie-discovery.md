@@ -1,79 +1,59 @@
-# Basic Task Manager
+# Movie Discovery App
 
 ## Objective
-Create a simple productivity app where users can manage tasks with create, update, complete, and delete operations.
+Build a movie browsing app that lets users search titles, view details, and maintain a watchlist.
 
 ## Core Requirements
-- Add tasks with title and optional description.
-- Edit existing tasks.
-- Mark tasks complete/incomplete.
-- Delete tasks.
-- Persist tasks in local storage or small database.
-- Filter tasks by all/active/completed.
+- Search movies by title.
+- Show trending/popular list.
+- Movie details page (overview, rating, release date).
+- Add/remove from watchlist.
+- Handle loading/error/empty states.
 
 ## Suggested Architecture
-- UI layer for task list and controls.
-- State layer for task updates and filtering.
-- Storage layer for persistence.
+- Pages for list and detail views.
+- API service module for TMDB/OMDb calls.
+- Local persistence for watchlist.
 
-## Data Model
-- `id`
-- `title`
-- `description`
-- `status` (`ACTIVE` | `COMPLETED`)
-- `created_at`
-- `updated_at`
+## API Design
+- `GET /api/movies?q=<query>`
+- `GET /api/movies/:id`
 
 ## Implementation Guide
-1. Build controlled form for task creation.
-2. Create state reducer for add/edit/delete/toggle.
-3. Add filtered list view.
-4. Persist list in local storage.
-5. Add validation and empty states.
+1. Build search and listing UI.
+2. Integrate movie API service.
+3. Create details page and routing.
+4. Add watchlist state + persistence.
+5. Add responsive styling and skeleton loaders.
 
 ## Code Snippets
 ```ts
-type Task = {
-  id: string;
-  title: string;
-  done: boolean;
-};
+export async function searchMovies(query: string) {
+  const res = await fetch(`/api/movies?q=${encodeURIComponent(query)}`);
+  if (!res.ok) throw new Error("Search failed");
+  return res.json();
+}
 ```
 
 ```ts
-const activeTasks = tasks.filter((task) => !task.done);
-const completedTasks = tasks.filter((task) => task.done);
+const isInWatchlist = (id: string) =>
+  watchlist.some((movie) => movie.id === id);
 ```
 
-## Implementation Steps
-- Build task form and list UI.
-- Add local state management.
-- Implement add/edit/delete handlers.
-- Add complete toggle and filters.
-- Persist state to local storage.
-- Add empty/error state UX.
-
-## Quality Checklist
-- Handles empty input validation.
-- Keeps data after refresh.
-- Provides clear completed task styling.
-- Works on desktop and mobile.
-
 ## Deliverables
-- Deployed task manager app.
-- Source code with clear folder structure.
-- README with setup and feature notes.
+- Functional movie discovery app.
+- README with API key/env configuration.
 
 ## Difficulty
-Level: Easy  
-Time: 3-5 Hours
+Level: Intermediate  
+Time: 5-8 Hours
 
 ## Stack-Specific IDE Snippets
 
 ### React (Frontend)
 
 ```tsx
-// Task Manager - React starter snippet
+// Movie Discovery App - React starter snippet
 import { useEffect, useState } from "react";
 
 type ProjectItem = {
@@ -93,7 +73,7 @@ export default function ProjectPage() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
+      <h1>Movie Discovery App</h1>
       <ul>
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
@@ -107,7 +87,7 @@ export default function ProjectPage() {
 ### Django (Backend)
 
 ```python
-# Task Manager - Django model + API view snippet
+# Movie Discovery App - Django model + API view snippet
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -126,7 +106,7 @@ def list_items(request):
 ### Spring Boot (Backend)
 
 ```java
-// Task Manager - Spring Boot entity + REST endpoint snippet
+// Movie Discovery App - Spring Boot entity + REST endpoint snippet
 @Entity
 public class ProjectItem {
     @Id

@@ -1,79 +1,59 @@
-# Basic Task Manager
+# Event-Driven Order Processing
 
 ## Objective
-Create a simple productivity app where users can manage tasks with create, update, complete, and delete operations.
+Design a backend workflow where order events drive inventory, payment, shipping, and notification services asynchronously.
 
 ## Core Requirements
-- Add tasks with title and optional description.
-- Edit existing tasks.
-- Mark tasks complete/incomplete.
-- Delete tasks.
-- Persist tasks in local storage or small database.
-- Filter tasks by all/active/completed.
+- Order create/confirm/cancel events.
+- Message broker integration (Kafka/RabbitMQ/SQS).
+- Idempotent consumers and retry strategy.
+- Dead-letter queue handling.
+- End-to-end order status tracking.
 
 ## Suggested Architecture
-- UI layer for task list and controls.
-- State layer for task updates and filtering.
-- Storage layer for persistence.
-
-## Data Model
-- `id`
-- `title`
-- `description`
-- `status` (`ACTIVE` | `COMPLETED`)
-- `created_at`
-- `updated_at`
+- API service for order intake.
+- Event bus for domain events.
+- Independent consumers: inventory, payment, shipping, notification.
 
 ## Implementation Guide
-1. Build controlled form for task creation.
-2. Create state reducer for add/edit/delete/toggle.
-3. Add filtered list view.
-4. Persist list in local storage.
-5. Add validation and empty states.
+1. Define event schema and versioning policy.
+2. Publish events from order service.
+3. Implement consumer idempotency.
+4. Add retries with backoff + DLQ.
+5. Add saga/compensation flows.
 
 ## Code Snippets
 ```ts
-type Task = {
-  id: string;
-  title: string;
-  done: boolean;
-};
+interface OrderCreatedEvent {
+  eventId: string;
+  eventType: "order.created";
+  orderId: string;
+  userId: string;
+  items: Array<{ sku: string; qty: number }>;
+  createdAt: string;
+}
 ```
 
 ```ts
-const activeTasks = tasks.filter((task) => !task.done);
-const completedTasks = tasks.filter((task) => task.done);
+if (await hasProcessed(event.eventId)) return;
+await reserveInventory(event.orderId, event.items);
+await markProcessed(event.eventId);
 ```
 
-## Implementation Steps
-- Build task form and list UI.
-- Add local state management.
-- Implement add/edit/delete handlers.
-- Add complete toggle and filters.
-- Persist state to local storage.
-- Add empty/error state UX.
-
-## Quality Checklist
-- Handles empty input validation.
-- Keeps data after refresh.
-- Provides clear completed task styling.
-- Works on desktop and mobile.
-
 ## Deliverables
-- Deployed task manager app.
-- Source code with clear folder structure.
-- README with setup and feature notes.
+- Event-driven order processing backend.
+- Diagrams for event flow and failure handling.
 
 ## Difficulty
-Level: Easy  
-Time: 3-5 Hours
+Level: Expert  
+Time: 20-32 Hours
 
 ## Stack-Specific IDE Snippets
 
 ### React (Frontend)
 
 ```tsx
-// Task Manager - React starter snippet
+// Event-Driven Order Processing - React starter snippet
 import { useEffect, useState } from "react";
 
 type ProjectItem = {
@@ -93,7 +73,7 @@ export default function ProjectPage() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
+      <h1>Event-Driven Order Processing</h1>
       <ul>
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
@@ -107,7 +87,7 @@ export default function ProjectPage() {
 ### Django (Backend)
 
 ```python
-# Task Manager - Django model + API view snippet
+# Event-Driven Order Processing - Django model + API view snippet
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -126,7 +106,7 @@ def list_items(request):
 ### Spring Boot (Backend)
 
 ```java
-// Task Manager - Spring Boot entity + REST endpoint snippet
+// Event-Driven Order Processing - Spring Boot entity + REST endpoint snippet
 @Entity
 public class ProjectItem {
     @Id

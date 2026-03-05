@@ -1,79 +1,68 @@
-# Basic Task Manager
+# Team Project Management Suite
 
 ## Objective
-Create a simple productivity app where users can manage tasks with create, update, complete, and delete operations.
+Build a fullstack application for team project planning with boards, tasks, comments, and sprint tracking.
 
 ## Core Requirements
-- Add tasks with title and optional description.
-- Edit existing tasks.
-- Mark tasks complete/incomplete.
-- Delete tasks.
-- Persist tasks in local storage or small database.
-- Filter tasks by all/active/completed.
+- Workspace/project creation.
+- Kanban board with task lifecycle.
+- Comments, mentions, and activity logs.
+- Sprint planning and burndown overview.
+- Role-based permissions (admin/member/viewer).
 
 ## Suggested Architecture
-- UI layer for task list and controls.
-- State layer for task updates and filtering.
-- Storage layer for persistence.
+- Next.js frontend + API routes/backend.
+- Relational database for projects/tasks.
+- Realtime layer for board updates.
 
 ## Data Model
-- `id`
-- `title`
-- `description`
-- `status` (`ACTIVE` | `COMPLETED`)
-- `created_at`
-- `updated_at`
+- `workspaces`, `projects`, `sprints`, `tasks`, `comments`, `activity_logs`
 
 ## Implementation Guide
-1. Build controlled form for task creation.
-2. Create state reducer for add/edit/delete/toggle.
-3. Add filtered list view.
-4. Persist list in local storage.
-5. Add validation and empty states.
+1. Implement workspace and user roles.
+2. Build board and task CRUD.
+3. Add drag-drop task movement.
+4. Add comment/mention notifications.
+5. Add sprint metrics and reports.
 
 ## Code Snippets
 ```ts
-type Task = {
-  id: string;
-  title: string;
-  done: boolean;
-};
+type TaskStatus = "BACKLOG" | "TODO" | "IN_PROGRESS" | "DONE";
+
+function moveTask(taskId: string, to: TaskStatus) {
+  return fetch(`/api/tasks/${taskId}/move`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ to }),
+  });
+}
 ```
 
-```ts
-const activeTasks = tasks.filter((task) => !task.done);
-const completedTasks = tasks.filter((task) => task.done);
+```sql
+CREATE TABLE tasks (
+  id UUID PRIMARY KEY,
+  project_id UUID NOT NULL,
+  title TEXT NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  assignee_id UUID NULL,
+  due_date DATE NULL
+);
 ```
-
-## Implementation Steps
-- Build task form and list UI.
-- Add local state management.
-- Implement add/edit/delete handlers.
-- Add complete toggle and filters.
-- Persist state to local storage.
-- Add empty/error state UX.
-
-## Quality Checklist
-- Handles empty input validation.
-- Keeps data after refresh.
-- Provides clear completed task styling.
-- Works on desktop and mobile.
 
 ## Deliverables
-- Deployed task manager app.
-- Source code with clear folder structure.
-- README with setup and feature notes.
+- Working project management suite.
+- API docs + schema migration files.
 
 ## Difficulty
-Level: Easy  
-Time: 3-5 Hours
+Level: Expert  
+Time: 26-42 Hours
 
 ## Stack-Specific IDE Snippets
 
 ### React (Frontend)
 
 ```tsx
-// Task Manager - React starter snippet
+// Team Project Management Suite - React starter snippet
 import { useEffect, useState } from "react";
 
 type ProjectItem = {
@@ -93,7 +82,7 @@ export default function ProjectPage() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
+      <h1>Team Project Management Suite</h1>
       <ul>
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
@@ -107,7 +96,7 @@ export default function ProjectPage() {
 ### Django (Backend)
 
 ```python
-# Task Manager - Django model + API view snippet
+# Team Project Management Suite - Django model + API view snippet
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -126,7 +115,7 @@ def list_items(request):
 ### Spring Boot (Backend)
 
 ```java
-// Task Manager - Spring Boot entity + REST endpoint snippet
+// Team Project Management Suite - Spring Boot entity + REST endpoint snippet
 @Entity
 public class ProjectItem {
     @Id

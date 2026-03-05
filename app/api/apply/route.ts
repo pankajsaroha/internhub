@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
         // 1. Select Projects
         const criteria = getAssignmentCriteria(applicant_type, experience_level, program);
-        const assignedProjects = selectRandomProjects(criteria.category, criteria.experience, 2);
+        const assignedProjects = selectRandomProjects(criteria.category, criteria.experience, 3);
         const assignedProjectIds = assignedProjects.map(p => p.id).join(", ");
 
         // 2. Initial Insertion with APPLIED status
@@ -70,7 +70,7 @@ export async function POST(req: Request) {
 
         // 5. Respond immediately to show success popup
         return NextResponse.json({ success: true, data: insertData });
-    } catch (err: any) {
+    } catch (err: unknown) {
         console.error("API Error:", err);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }

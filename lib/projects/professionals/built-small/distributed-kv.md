@@ -1,79 +1,71 @@
-# Basic Task Manager
+# Distributed Key-Value Store
 
 ## Objective
-Create a simple productivity app where users can manage tasks with create, update, complete, and delete operations.
+Design and implement a distributed key-value system with partitioning, replication, and failure tolerance.
 
 ## Core Requirements
-- Add tasks with title and optional description.
-- Edit existing tasks.
-- Mark tasks complete/incomplete.
-- Delete tasks.
-- Persist tasks in local storage or small database.
-- Filter tasks by all/active/completed.
+- Consistent hashing-based partitioning.
+- Replication factor configuration.
+- GET/SET/DELETE API (HTTP or gRPC).
+- Health checks and node heartbeat.
+- Basic quorum or leader strategy.
+- Recovery behavior when nodes rejoin.
 
 ## Suggested Architecture
-- UI layer for task list and controls.
-- State layer for task updates and filtering.
-- Storage layer for persistence.
+- Coordinator/routing layer for request forwarding.
+- Storage engine per node.
+- Membership and gossip/heartbeat subsystem.
+- Replication and sync module.
 
 ## Data Model
-- `id`
-- `title`
-- `description`
-- `status` (`ACTIVE` | `COMPLETED`)
-- `created_at`
-- `updated_at`
+- `key`, `value`, `version`, `timestamp`, `ttl` (optional).
 
 ## Implementation Guide
-1. Build controlled form for task creation.
-2. Create state reducer for add/edit/delete/toggle.
-3. Add filtered list view.
-4. Persist list in local storage.
-5. Add validation and empty states.
+1. Build single-node read/write API.
+2. Add consistent hash ring routing.
+3. Implement replication and read quorum.
+4. Add heartbeats and failure detection.
+5. Add rebalancing and recovery flows.
 
 ## Code Snippets
-```ts
-type Task = {
-  id: string;
-  title: string;
-  done: boolean;
-};
+```go
+type Record struct {
+    Key       string
+    Value     []byte
+    Version   int64
+    UpdatedAt time.Time
+}
 ```
 
-```ts
-const activeTasks = tasks.filter((task) => !task.done);
-const completedTasks = tasks.filter((task) => task.done);
+```go
+func isQuorumMet(acks int, replicas int) bool {
+    return acks >= (replicas/2 + 1)
+}
 ```
 
 ## Implementation Steps
-- Build task form and list UI.
-- Add local state management.
-- Implement add/edit/delete handlers.
-- Add complete toggle and filters.
-- Persist state to local storage.
-- Add empty/error state UX.
-
-## Quality Checklist
-- Handles empty input validation.
-- Keeps data after refresh.
-- Provides clear completed task styling.
-- Works on desktop and mobile.
+- Build single-node KV API first.
+- Add hash ring and partition routing.
+- Add replication and read/write handling.
+- Add heartbeat-based failure detection.
+- Implement rebalance on topology changes.
+- Add integration tests for failover scenarios.
 
 ## Deliverables
-- Deployed task manager app.
-- Source code with clear folder structure.
-- README with setup and feature notes.
+- Multi-node KV system runnable with Docker.
+- Load and failure simulation scripts.
+- README with architecture and consistency model.
 
 ## Difficulty
-Level: Easy  
-Time: 3-5 Hours
+Level: Expert  
+Time: 24-36 Hours
 
 ## Stack-Specific IDE Snippets
 
 ### React (Frontend)
 
 ```tsx
-// Task Manager - React starter snippet
+// Distributed KV Store - React starter snippet
 import { useEffect, useState } from "react";
 
 type ProjectItem = {
@@ -93,7 +85,7 @@ export default function ProjectPage() {
 
   return (
     <main>
-      <h1>Task Manager</h1>
+      <h1>Distributed KV Store</h1>
       <ul>
         {items.map((item) => (
           <li key={item.id}>{item.title}</li>
@@ -107,7 +99,7 @@ export default function ProjectPage() {
 ### Django (Backend)
 
 ```python
-# Task Manager - Django model + API view snippet
+# Distributed KV Store - Django model + API view snippet
 from django.db import models
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -126,7 +118,7 @@ def list_items(request):
 ### Spring Boot (Backend)
 
 ```java
-// Task Manager - Spring Boot entity + REST endpoint snippet
+// Distributed KV Store - Spring Boot entity + REST endpoint snippet
 @Entity
 public class ProjectItem {
     @Id
