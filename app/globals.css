@@ -2820,3 +2820,59 @@ li {
     page-break-inside: avoid;
   }
 }
+
+/* Submit success modal */
+.submit-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1200;
+}
+
+.submit-modal-card {
+  width: min(520px, 100%);
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+  padding: 24px;
+}
+
+.submit-modal-card h3 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  color: #0f172a;
+}
+
+.submit-modal-card p {
+  margin: 0;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.submit-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+@media (max-width: 640px) {
+  .submit-modal-card {
+    padding: 18px;
+    border-radius: 12px;
+  }
+
+  .submit-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .submit-modal-actions .btn-primary,
+  .submit-modal-actions .btn-secondary {
+    width: 100%;
+  }
+}
