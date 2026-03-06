@@ -10,14 +10,30 @@ export default function AdminCertificatePage() {
   const [program, setProgram] = useState("")
   const [email, setEmail] = useState("")
   const [certificateId, setCertificateId] = useState("")
+  const [modal, setModal] = useState<{ show: boolean, title: string, message: string }>({ show: false, title: "", message: "" });
 
   const router = useRouter()
 
   useEffect(() => {
-    if (!localStorage.getItem("admin_token")) {
-      router.push("/admin/login")
+    const adminSecret = sessionStorage.getItem("admin_secret")
+    if (!adminSecret) {
+      router.push("/admin")
+      return
     }
-  }, [])
+
+    // Check if a normal user is logged in (isolation)
+    import("@/lib/supabase").then(({ supabase }) => {
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          setModal({
+            show: true,
+            title: "Access Denied",
+            message: "You are currently logged in as a student. Please log out before accessing admin features."
+          });
+        }
+      })
+    })
+  }, [router])
 
   const generateCertificate = async () => {
     const res = await fetch("/api/certificates/create", {
@@ -31,32 +47,36 @@ export default function AdminCertificatePage() {
   }
 
   const downloadPDF = async () => {
-  const res = await fetch("/api/certificates/pdf", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ certificateId }),
-  })
+    const res = await fetch("/api/certificates/pdf", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ certificateId }),
+    })
 
-  const blob = await res.blob()
-  const url = window.URL.createObjectURL(blob)
+    const blob = await res.blob()
+    const url = window.URL.createObjectURL(blob)
 
-  const a = document.createElement("a")
-  a.href = url
-  a.download = "Inzivoo-Certificate.pdf"
-  a.click()
+    const a = document.createElement("a")
+    a.href = url
+    a.download = "Inzivoo-Certificate.pdf"
+    a.click()
 
-  window.URL.revokeObjectURL(url)
-}
+    window.URL.revokeObjectURL(url)
+  }
 
-const sendEmail = async () => {
-  await fetch("/api/certificates/email", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, certificateId }),
-  })
+  const sendEmail = async () => {
+    await fetch("/api/certificates/email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, certificateId }),
+    })
 
-  alert("Certificate sent successfully!")
-}
+    setModal({
+      show: true,
+      title: "Email Sent",
+      message: "The certificate has been sent successfully to the student."
+    })
+  }
 
   return (
     <div className="admin-container">
@@ -97,6 +117,27 @@ const sendEmail = async () => {
             </button>
           </div>
         </>
+      )}
+
+      {modal.show && (
+        <div className="modal-overlay" role="dialog" aria-modal="true">
+          <div className="modal-card">
+            <h3>{modal.title}</h3>
+            <p>{modal.message}</p>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => {
+                  setModal({ ...modal, show: false });
+                  router.push("/");
+                }}
+              >
+                Go to Homepage
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

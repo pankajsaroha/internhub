@@ -10,6 +10,7 @@ import { User } from "@supabase/supabase-js";
 export default function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
+    const [isAdmin, setIsAdmin] = useState(false);
     const navbarRef = useRef<HTMLElement | null>(null);
     const router = useRouter();
 
@@ -19,12 +20,32 @@ export default function Navbar() {
             setUser(session?.user ?? null);
         });
 
+        // Check Admin session
+        const checkAdmin = () => {
+            const adminSecret = sessionStorage.getItem("admin_secret");
+            setIsAdmin(!!adminSecret);
+        };
+        checkAdmin();
+
+        // Listen for Admin Sync Events
+        window.addEventListener("admin-login", checkAdmin);
+        window.addEventListener("admin-logout", checkAdmin);
+
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
+            // If user logs in, ensure admin is cleared to avoid mixed states
+            if (session) {
+                sessionStorage.removeItem("admin_secret");
+                setIsAdmin(false);
+            }
         });
 
-        return () => subscription.unsubscribe();
+        return () => {
+            subscription.unsubscribe();
+            window.removeEventListener("admin-login", checkAdmin);
+            window.removeEventListener("admin-logout", checkAdmin);
+        };
     }, []);
 
     useEffect(() => {
@@ -53,6 +74,8 @@ export default function Navbar() {
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
+        sessionStorage.removeItem("admin_secret");
+        setIsAdmin(false);
         setIsMenuOpen(false);
         router.push("/");
         router.refresh();
@@ -91,6 +114,11 @@ export default function Navbar() {
                 {user ? (
                     <>
                         <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
+                        <button onClick={handleLogout} className="nav-logout-btn">Logout</button>
+                    </>
+                ) : isAdmin ? (
+                    <>
+                        <Link href="/admin" onClick={() => setIsMenuOpen(false)}>Admin Portal</Link>
                         <button onClick={handleLogout} className="nav-logout-btn">Logout</button>
                     </>
                 ) : (
