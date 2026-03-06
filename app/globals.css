@@ -2821,7 +2821,8 @@ li {
   }
 }
 
-/* Submit success modal */
+/* Global modal system */
+.modal-overlay,
 .submit-modal-overlay {
   position: fixed;
   inset: 0;
@@ -2830,9 +2831,11 @@ li {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  z-index: 1200;
+  z-index: 2000;
+  backdrop-filter: blur(4px);
 }
 
+.modal-card,
 .submit-modal-card {
   width: min(520px, 100%);
   background: #ffffff;
@@ -2840,39 +2843,59 @@ li {
   border: 1px solid #e2e8f0;
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
   padding: 24px;
+  animation: modalEnter 0.3s ease-out;
 }
 
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-card h3,
 .submit-modal-card h3 {
   margin: 0 0 10px;
   font-size: 22px;
   color: #0f172a;
 }
 
+.modal-card p,
 .submit-modal-card p {
   margin: 0;
   color: #334155;
   line-height: 1.6;
 }
 
+.modal-actions,
 .submit-modal-actions {
   display: flex;
   gap: 10px;
   justify-content: flex-end;
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 @media (max-width: 640px) {
+
+  .modal-card,
   .submit-modal-card {
     padding: 18px;
     border-radius: 12px;
   }
 
+  .modal-actions,
   .submit-modal-actions {
     flex-direction: column-reverse;
   }
 
-  .submit-modal-actions .btn-primary,
-  .submit-modal-actions .btn-secondary {
+  .modal-actions .btn-primary,
+  .modal-actions .btn-secondary,
+  .submit-modal-actions .btn-primary {
     width: 100%;
   }
 }
