@@ -238,21 +238,31 @@ export async function sendAssignmentEmail(to: string, name: string, pdfBuffer: B
             to: [to],
             subject: `Your Project Access - ${name}`,
             html: `
-                <div style="font-family: sans-serif; color: #1e293b; line-height: 1.6;">
-                    <h2 style="color: #4f46e5;">Welcome to Inzivoo, ${name}!</h2>
-                    <p>We've received your application and carefully reviewed your profile.</p>
-                    <p>Attached to this email, you will find a PDF containing your <strong>assigned projects</strong>. These projects are selected to match your experience level and chosen track.</p>
-                    <p><strong>Important:</strong> You must complete at least 1 assigned project.</p>
-                    <p><strong>Next Steps:</strong></p>
-                    <ul>
-                        <li>Open the attached PDF to review the project details.</li>
-                        <li> You may refer to the project guideline for better understanding and guidance.</li>
-                        <li>Follow the implementation guide provided for each project.</li>
-                        <li>Submit your work within the requested timeline.</li>
+                <div style="font-family: sans-serif; color: #1e293b; line-height: 1.6; max-width: 600px;">
+                    <p>Hi ${name},</p>
+                    <p>Thank you for applying to <strong>Inzivoo</strong>.</p>
+                    <p>Based on your experience level, we have assigned you a set of projects.<br />
+                    You will find the <strong>project details in the attached PDF</strong>.</p>
+                    
+                    <h3 style="color: #4f46e5; margin-top: 24px;">What you need to do</h3>
+                    <ul style="list-style-type: disc; padding-left: 20px;">
+                        <li>Complete <strong>at least one project</strong> from the list</li>
+                        <li>Upload your code to a <strong>public GitHub repository</strong> (or shareable drive link)</li>
                     </ul>
+                    <p>You may refer to the provided <strong>project guide</strong> if you need help. You can also include documentation or test evidence in your <strong>README.md</strong>.</p>
+                    
+                    <h3 style="color: #4f46e5; margin-top: 24px;">Submit your project</h3>
+                    <p>Login using the same email you used during your application. We will send you a <strong>one-time OTP</strong> to access your account.</p>
+                    <p>Login here:<br />
+                    <a href="https://inzivoo.com/login" style="color: #4f46e5; font-weight: bold;">https://inzivoo.com/login</a></p>
+                    <p>After logging in, submit your project from the <strong>Submit Project</strong> section.</p>
+                    
+                    <p style="margin-top: 20px;">Most applicants complete their first project within <strong>2 weeks</strong>.</p>
+                    
                     <p>If you have any questions, feel free to reply to this email.</p>
-                    <br>
-                    <p>Best regards,<br>The Inzivoo Team</p>
+                    
+                    <p style="margin-top: 30px;">Best regards,<br />
+                    <strong>Team Inzivoo</strong></p>
                 </div>
             `,
             attachments: [
