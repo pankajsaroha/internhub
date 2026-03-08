@@ -191,7 +191,7 @@ export default function DashboardPage() {
 
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-            amount: 49900, // Amount in paise (499 INR)
+            amount: 4900, // Amount in paise (49 INR)
             currency: "INR",
             name: "Inzivoo",
             description: `Payment for ${cert.program} Certificate`,
@@ -357,7 +357,7 @@ export default function DashboardPage() {
                                                             className="btn-primary-small"
                                                             onClick={() => handlePayment(cert)}
                                                         >
-                                                            Pay & Download
+                                                            Pay ₹49 & Download
                                                         </button>
                                                     )}
                                                 </div>

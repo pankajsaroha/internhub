@@ -143,7 +143,7 @@ export default function SubmitPage() {
             setShowSuccessModal(true);
             redirectTimeoutRef.current = setTimeout(() => {
                 router.push("/dashboard");
-            }, 2500);
+            }, 8000);
         }
         setIsSubmitting(false);
     };
@@ -231,6 +231,7 @@ export default function SubmitPage() {
                         <h3>Submitted Successfully</h3>
                         <p>
                             Great work. Your project link(s) are submitted for review.
+                            Review time takes less than 5 days and applications can be seen under certificates.
                             You will be redirected to your dashboard in a moment.
                         </p>
                         <div className="submit-modal-actions">
