@@ -1,5 +1,27 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { programs } from "./ProgramData";
+
+export const metadata: Metadata = {
+    title: "Training Programs",
+    description:
+        "Browse Inzivoo project-based training programs in frontend, backend, full stack, Java, Python, and Go development.",
+    keywords: [
+        "training programs",
+        "frontend development program",
+        "backend development program",
+        "full stack development program",
+        "java programming program",
+        "python programming program",
+        "go programming program",
+        "software development training",
+        "project based training programs",
+        "online developer training",
+    ],
+    alternates: {
+        canonical: "/programs",
+    },
+};
 
 const programCardStyle: Record<string, { accent: string; tag: string }> = {
     "frontend-development": {

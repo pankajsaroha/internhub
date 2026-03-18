@@ -1,5 +1,28 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { quizPrograms } from "./quizData";
+
+export const metadata: Metadata = {
+  title: "Programming Quizzes",
+  description:
+    "Practice Java, Python, Go, JavaScript, C++, C#, Rust, and pseudocode quizzes on Inzivoo with level-based technical MCQs.",
+  keywords: [
+    "programming quizzes",
+    "java quiz",
+    "python quiz",
+    "go quiz",
+    "javascript quiz",
+    "c++ quiz",
+    "c# quiz",
+    "rust quiz",
+    "technical mcq quiz",
+    "coding interview quiz",
+    "level based programming quiz",
+  ],
+  alternates: {
+    canonical: "/quiz",
+  },
+};
 
 const quizCardStyle: Record<string, { accent: string; tag: string; card: string; iconClass: string }> = {
   "java-programming": {
@@ -173,7 +196,7 @@ export default function QuizListPage() {
       <header className="quiz-list-header">
         <h1>Programming Quizzes</h1>
         <p>
-          Practice topic-wise quizzes with fresher and experienced levels to build confidence step by step.
+          Practice level-based programming quizzes to build confidence in core concepts, coding logic, and technical interview preparation.
         </p>
       </header>
 

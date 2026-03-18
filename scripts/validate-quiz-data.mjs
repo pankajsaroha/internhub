@@ -4,6 +4,7 @@ const issues = [];
 
 for (const program of quizPrograms) {
   const seenIds = new Set();
+  const seenQuestionTexts = new Set();
 
   for (const question of program.questionBank) {
     if (seenIds.has(question.id)) {
@@ -41,6 +42,16 @@ for (const program of quizPrograms) {
     if (!question.explanation?.trim()) {
       issues.push(`${program.slug}#${question.id}: empty explanation`);
     }
+
+    const normalizedQuestionText = `${question.topic}::${question.question
+      ?.trim()
+      .toLowerCase()}`;
+    if (seenQuestionTexts.has(normalizedQuestionText)) {
+      issues.push(
+        `${program.slug}#${question.id}: duplicate question text found for topic "${question.topic}"`
+      );
+    }
+    seenQuestionTexts.add(normalizedQuestionText);
   }
 
   const difficultyDistribution = program.questionBank.reduce(

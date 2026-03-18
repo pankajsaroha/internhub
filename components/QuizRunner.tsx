@@ -4,10 +4,13 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import {
   QUIZ_QUESTIONS_PER_ATTEMPT,
+  QUIZ_EXPERIENCED_TOTAL_PER_ATTEMPT,
+  QUIZ_PREMIUM_TOTAL_PER_ATTEMPT,
   QUIZ_ADVANCED_PER_ATTEMPT,
   QUIZ_EASY_PER_ATTEMPT,
   QUIZ_EXPERIENCED_EASY_PER_ATTEMPT,
   QUIZ_EXPERIENCED_ADVANCED_PER_ATTEMPT,
+  QUIZ_MAX_QUESTIONS_PER_ATTEMPT,
   QUIZ_PREMIUM_EASY_PER_ATTEMPT,
   QUIZ_PREMIUM_ADVANCED_PER_ATTEMPT,
   QUIZ_PREMIUM_PER_ATTEMPT,
@@ -19,22 +22,16 @@ type QuizRunnerProps = {
   program: QuizProgram;
 };
 
-type QuizAttemptLevel = "fresher" | "experienced" | "premium";
+type QuizAttemptLevel = "basic" | "intermediate" | "premium";
 
 type AttemptFilters = {
-  topic: string;
   level: QuizAttemptLevel;
 };
 
 function pickRandomQuestions(questionBank: QuizQuestion[], filters: AttemptFilters) {
-  const filteredBank =
-    filters.topic === "all"
-      ? questionBank
-      : questionBank.filter((q) => q.topic === filters.topic);
-
-  const easyPool = filteredBank.filter((q) => q.difficulty === "easy");
-  const advancedPool = filteredBank.filter((q) => q.difficulty === "advanced");
-  const premiumPool = filteredBank.filter((q) => q.difficulty === "premium");
+  const easyPool = questionBank.filter((q) => q.difficulty === "easy");
+  const advancedPool = questionBank.filter((q) => q.difficulty === "advanced");
+  const premiumPool = questionBank.filter((q) => q.difficulty === "premium");
 
   const shuffle = (items: QuizQuestion[]) => {
     const shuffled = [...items];
@@ -48,16 +45,22 @@ function pickRandomQuestions(questionBank: QuizQuestion[], filters: AttemptFilte
   const easyTarget =
     filters.level === "premium"
       ? QUIZ_PREMIUM_EASY_PER_ATTEMPT
-      : filters.level === "experienced"
+      : filters.level === "intermediate"
       ? QUIZ_EXPERIENCED_EASY_PER_ATTEMPT
       : QUIZ_EASY_PER_ATTEMPT;
   const advancedTarget =
     filters.level === "premium"
       ? QUIZ_PREMIUM_ADVANCED_PER_ATTEMPT
-      : filters.level === "experienced"
+      : filters.level === "intermediate"
       ? QUIZ_EXPERIENCED_ADVANCED_PER_ATTEMPT
       : QUIZ_ADVANCED_PER_ATTEMPT;
   const premiumTarget = filters.level === "premium" ? QUIZ_PREMIUM_PER_ATTEMPT : 0;
+  const totalTarget =
+    filters.level === "premium"
+      ? QUIZ_PREMIUM_TOTAL_PER_ATTEMPT
+      : filters.level === "intermediate"
+      ? QUIZ_EXPERIENCED_TOTAL_PER_ATTEMPT
+      : QUIZ_QUESTIONS_PER_ATTEMPT;
 
   const easyPicked = shuffle(easyPool).slice(0, Math.min(easyTarget, easyPool.length));
   const advancedPicked = shuffle(advancedPool).slice(
@@ -70,14 +73,24 @@ function pickRandomQuestions(questionBank: QuizQuestion[], filters: AttemptFilte
   );
 
   const selected = [...easyPicked, ...advancedPicked, ...premiumPicked];
-  if (selected.length < QUIZ_QUESTIONS_PER_ATTEMPT) {
+  if (selected.length < totalTarget) {
     const pickedIds = new Set(selected.map((q) => q.id));
-    const remaining = shuffle(filteredBank.filter((q) => !pickedIds.has(q.id)));
+    const preferredFallbackPool =
+      filters.level === "premium"
+        ? [
+            ...shuffle(premiumPool),
+            ...shuffle(advancedPool),
+            ...shuffle(easyPool),
+          ]
+        : filters.level === "intermediate"
+        ? [...shuffle(advancedPool), ...shuffle(easyPool), ...shuffle(premiumPool)]
+        : [...shuffle(easyPool), ...shuffle(advancedPool)];
+    const remaining = preferredFallbackPool.filter((q) => !pickedIds.has(q.id));
     selected.push(
       ...remaining.slice(
         0,
         Math.min(
-          QUIZ_QUESTIONS_PER_ATTEMPT - selected.length,
+          totalTarget - selected.length,
           remaining.length
         )
       )
@@ -87,7 +100,7 @@ function pickRandomQuestions(questionBank: QuizQuestion[], filters: AttemptFilte
   const shuffled = shuffle(selected);
   return shuffled.slice(
     0,
-    Math.min(QUIZ_QUESTIONS_PER_ATTEMPT, shuffled.length)
+    Math.min(totalTarget, QUIZ_MAX_QUESTIONS_PER_ATTEMPT, shuffled.length)
   );
 }
 
@@ -98,15 +111,10 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
   const [attemptQuestions, setAttemptQuestions] = useState<QuizQuestion[]>([]);
   const [isReady, setIsReady] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState("all");
-  const [selectedLevel, setSelectedLevel] = useState<QuizAttemptLevel>("fresher");
+  const [selectedLevel, setSelectedLevel] = useState<QuizAttemptLevel>("basic");
   const [timeLeftSeconds, setTimeLeftSeconds] = useState(
     program.durationMinutes * 60
   );
-
-  const availableTopics = Array.from(
-    new Set(program.questionBank.map((question) => question.topic))
-  ).sort();
 
   function setLevel(level: QuizAttemptLevel) {
     setSelectedLevel(level);
@@ -137,8 +145,7 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
   ]);
 
   useEffect(() => {
-    const initialFilters: AttemptFilters = { topic: "all", level: "fresher" };
-    setSelectedTopic(initialFilters.topic);
+    const initialFilters: AttemptFilters = { level: "basic" };
     setLevel(initialFilters.level);
     setCurrentIndex(0);
     setAnswers({});
@@ -268,24 +275,12 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
           <p>{program.description}</p>
           <div className="quiz-meta">
             <span>{program.durationMinutes} Minutes</span>
-            <span>Select topic and level, start quiz</span>
+            <span>Select experience level and start quiz</span>
           </div>
         </header>
 
         <div className="quiz-panel">
           <div className="quiz-actions">
-            <select
-              value={selectedTopic}
-              onChange={(event) => setSelectedTopic(event.target.value)}
-              aria-label="Select topic"
-            >
-              <option value="all">All Topics</option>
-              {availableTopics.map((topic) => (
-                <option key={topic} value={topic}>
-                  {topic}
-                </option>
-              ))}
-            </select>
             <select
               value={selectedLevel}
               onChange={(event) =>
@@ -293,9 +288,9 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
               }
               aria-label="Select level"
             >
-              <option value="fresher">Beginner Level</option>
-              <option value="experienced">Intermediate Level</option>
-              <option value="premium">Advance Level</option>
+              <option value="basic">Basic Level</option>
+              <option value="intermediate">Intermediate Level</option>
+              <option value="premium">Advanced Level</option>
             </select>
             <button type="button" onClick={applyFilters} className="btn-primary">
               Start Quiz
@@ -339,11 +334,11 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
   }
 
   function restartQuiz() {
-    startAttempt({ topic: selectedTopic, level: selectedLevel });
+    startAttempt({ level: selectedLevel });
   }
 
   function applyFilters() {
-    startAttempt({ topic: selectedTopic, level: selectedLevel });
+    startAttempt({ level: selectedLevel });
   }
 
   function returnToSetup() {
@@ -375,10 +370,9 @@ export default function QuizRunner({ program }: QuizRunnerProps) {
             </span>
             <span>
               {answeredCount} answered |{" "}
-              {selectedTopic === "all" ? "All Topics" : selectedTopic} |{" "}
-              {selectedLevel === "fresher"
-                ? "Beginner"
-                : selectedLevel === "experienced"
+              {selectedLevel === "basic"
+                ? "Basic"
+                : selectedLevel === "intermediate"
                 ? "Intermediate"
                 : "Expert"}
             </span>
