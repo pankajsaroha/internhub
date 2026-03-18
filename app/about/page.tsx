@@ -1,3 +1,14 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Inzivoo",
+  description:
+    "Learn about Inzivoo, a project-based learning platform focused on practical software skills, guided programs, and certificates.",
+  alternates: {
+    canonical: "/about",
+  },
+};
+
 export default function AboutPage() {
   return (
     <main className="content-page">

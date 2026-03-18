@@ -1,4 +1,5 @@
 export const QUIZ_QUESTIONS_PER_ATTEMPT = 10;
+export const QUIZ_MAX_QUESTIONS_PER_ATTEMPT = 15;
 export const QUIZ_DURATION_MINUTES = 10;
 export const QUIZ_EASY_PER_ATTEMPT = 10;
 export const QUIZ_ADVANCED_PER_ATTEMPT = 0;
@@ -7,6 +8,8 @@ export const QUIZ_EXPERIENCED_ADVANCED_PER_ATTEMPT = 6;
 export const QUIZ_PREMIUM_EASY_PER_ATTEMPT = 2;
 export const QUIZ_PREMIUM_ADVANCED_PER_ATTEMPT = 4;
 export const QUIZ_PREMIUM_PER_ATTEMPT = 4;
+export const QUIZ_EXPERIENCED_TOTAL_PER_ATTEMPT = 12;
+export const QUIZ_PREMIUM_TOTAL_PER_ATTEMPT = 15;
 
 export type QuizDifficulty = "easy" | "advanced" | "premium";
 
@@ -28,6 +31,80 @@ export type QuizProgram = {
   durationMinutes: number;
   questionBank: QuizQuestion[];
 };
+
+const CURATED_TOPIC_QUESTION_PACKS: Record<string, Omit<QuizQuestion, "id">[]> = {
+  "java-programming": [
+    { topic: "Loops", question: "Which loop is best when the number of iterations is known in advance?", options: ["for", "while", "do-while", "switch"], answerIndex: 0, explanation: "A `for` loop is commonly used when initialization, condition, and update are known upfront.", difficulty: "easy" },
+    { topic: "Loops", question: "What happens if the update expression is missing in a `for` loop and the condition never becomes false?", options: ["Loop runs once", "Compile error", "Loop can become infinite", "Java converts it to while false"], answerIndex: 2, explanation: "Without a valid update or exit condition, the loop may never stop.", difficulty: "advanced" },
+    { topic: "Collections", question: "Which part of the Java Collections Framework maintains insertion order and allows duplicates?", options: ["Set", "Map", "List", "Queue only"], answerIndex: 2, explanation: "List implementations like ArrayList preserve insertion order and allow duplicates.", difficulty: "easy" },
+    { topic: "Collections", question: "Which interface is implemented by `HashMap` in the Java Collections Framework?", options: ["List", "Queue", "Map", "Set"], answerIndex: 2, explanation: "HashMap is a Map implementation, not a Collection implementation directly.", difficulty: "advanced" },
+  ],
+  "python-programming": [
+    { topic: "Loops", question: "Which statement skips the current iteration and moves to the next one in Python?", options: ["stop", "continue", "pass", "break"], answerIndex: 1, explanation: "`continue` skips the rest of the current loop body and proceeds with the next iteration.", difficulty: "easy" },
+    { topic: "Loops", question: "When does the `else` block on a Python loop run?", options: ["Only on syntax error", "Only when loop uses range()", "When the loop finishes without `break`", "After every iteration"], answerIndex: 2, explanation: "Loop `else` executes when the loop completes normally without hitting `break`.", difficulty: "advanced" },
+    { topic: "Collections", question: "Which Python collection stores unique unordered elements?", options: ["list", "tuple", "set", "dict"], answerIndex: 2, explanation: "A set stores unique elements and does not preserve insertion order in the same way as a list.", difficulty: "easy" },
+    { topic: "Collections", question: "Which Python structure is best for fast lookup by key?", options: ["list", "dict", "tuple", "range"], answerIndex: 1, explanation: "A dictionary is the standard key-value structure for fast lookups.", difficulty: "advanced" },
+  ],
+  "go-programming": [
+    { topic: "Loops", question: "Which looping keyword does Go provide for iteration?", options: ["for", "while", "loop", "repeat"], answerIndex: 0, explanation: "Go uses `for` for all loop forms, including while-style loops.", difficulty: "easy" },
+    { topic: "Loops", question: "What does `break` do inside a Go loop?", options: ["Skips to next iteration", "Exits the loop", "Restarts the loop", "Closes the channel"], answerIndex: 1, explanation: "`break` exits the nearest enclosing loop or switch.", difficulty: "advanced" },
+    { topic: "Collections", question: "Which Go type is most suitable for key-value storage?", options: ["slice", "struct", "map", "array"], answerIndex: 2, explanation: "Go maps are used for key-value data.", difficulty: "easy" },
+    { topic: "Collections", question: "Which built-in is commonly used to add elements to a slice?", options: ["push", "append", "insert", "merge"], answerIndex: 1, explanation: "`append` is the idiomatic way to add elements to a slice.", difficulty: "advanced" },
+  ],
+  "cpp-programming": [
+    { topic: "Loops", question: "Which statement immediately exits a loop in C++?", options: ["continue", "break", "return false", "pass"], answerIndex: 1, explanation: "`break` exits the nearest loop immediately.", difficulty: "easy" },
+    { topic: "Loops", question: "Which loop guarantees the body runs at least once?", options: ["for", "while", "do-while", "range-for"], answerIndex: 2, explanation: "A `do-while` loop checks its condition after the body executes.", difficulty: "advanced" },
+    { topic: "STL", question: "Which STL container is usually preferred for dynamic contiguous storage?", options: ["set", "vector", "map", "stack"], answerIndex: 1, explanation: "`vector` provides contiguous dynamic storage and fast access by index.", difficulty: "easy" },
+    { topic: "STL", question: "Which STL container offers key-value pairs with average O(1) lookup?", options: ["vector", "list", "unordered_map", "set"], answerIndex: 2, explanation: "`unordered_map` is hash-based and offers average constant-time lookup.", difficulty: "advanced" },
+  ],
+  "javascript-programming": [
+    { topic: "Loops", question: "Which statement skips to the next iteration of a JavaScript loop?", options: ["pass", "continue", "next", "yield"], answerIndex: 1, explanation: "`continue` skips the rest of the current iteration.", difficulty: "easy" },
+    { topic: "Loops", question: "Which loop is designed to iterate over iterable values like arrays?", options: ["for...of", "for...in", "while", "switch"], answerIndex: 0, explanation: "`for...of` iterates over values from iterables such as arrays and strings.", difficulty: "advanced" },
+    { topic: "Arrays", question: "Which array method returns a new array containing only matching elements?", options: ["map", "filter", "reduce", "find"], answerIndex: 1, explanation: "`filter` returns a new array of elements that satisfy the condition.", difficulty: "easy" },
+    { topic: "Arrays", question: "Which method adds one or more elements to the end of an array?", options: ["shift", "push", "pop", "slice"], answerIndex: 1, explanation: "`push` appends elements to the end of an array.", difficulty: "advanced" },
+  ],
+  "csharp-programming": [
+    { topic: "Loops", question: "Which loop is commonly used when a counter variable controls iteration in C#?", options: ["foreach", "for", "switch", "lock"], answerIndex: 1, explanation: "`for` is the standard loop when using a counter pattern.", difficulty: "easy" },
+    { topic: "Loops", question: "What does `continue` do inside a C# loop?", options: ["Ends the method", "Exits the loop", "Skips to the next iteration", "Throws an exception"], answerIndex: 2, explanation: "`continue` skips the remaining statements in the current iteration.", difficulty: "advanced" },
+    { topic: "Collections", question: "Which C# collection is best for storing key-value pairs?", options: ["List<T>", "Queue<T>", "Dictionary<TKey,TValue>", "Stack<T>"], answerIndex: 2, explanation: "Dictionary is the idiomatic key-value structure in C#.", difficulty: "easy" },
+    { topic: "Collections", question: "Which collection is most appropriate for first-in-first-out processing in C#?", options: ["Stack<T>", "Queue<T>", "HashSet<T>", "List<T>"], answerIndex: 1, explanation: "Queue follows FIFO order.", difficulty: "advanced" },
+  ],
+  "rust-programming": [
+    { topic: "Loops", question: "Which Rust keyword starts an unconditional loop that runs until broken?", options: ["for", "while", "loop", "iterate"], answerIndex: 2, explanation: "`loop` creates an infinite loop until a `break` occurs.", difficulty: "easy" },
+    { topic: "Loops", question: "Which Rust loop is typically used to iterate over items in a collection?", options: ["loop", "for", "match", "if let"], answerIndex: 1, explanation: "`for` is the usual way to iterate over items from an iterator.", difficulty: "advanced" },
+    { topic: "Collections", question: "Which Rust collection is commonly used for an ordered growable list?", options: ["HashMap", "Vec", "Option", "Result"], answerIndex: 1, explanation: "`Vec<T>` is Rust's growable contiguous collection type.", difficulty: "easy" },
+    { topic: "Collections", question: "Which collection should you choose for key-value storage in Rust?", options: ["Vec", "HashMap", "String", "Box"], answerIndex: 1, explanation: "HashMap is the standard key-value collection in Rust.", difficulty: "advanced" },
+  ],
+  "pseudocode-programming": [
+    { topic: "Loop Analysis", question: "If `i` starts at 0 and increases by 1 until `i < 4` is false, how many iterations run?", options: ["3", "4", "5", "Infinite"], answerIndex: 1, explanation: "The values are 0, 1, 2, and 3, so the loop runs 4 times.", difficulty: "easy" },
+    { topic: "Loop Analysis", question: "Which update is most likely to create an infinite loop if `n` starts positive and the condition is `WHILE n > 0`?", options: ["n <- n - 1", "n <- n / 2", "n <- n + 1", "n <- 0"], answerIndex: 2, explanation: "Increasing `n` while checking `n > 0` prevents the loop from terminating.", difficulty: "advanced" },
+    { topic: "Array Analysis", question: "Which operation is usually fastest for reading the third element of an array?", options: ["Direct indexing", "Linear scan", "Binary search", "Sorting first"], answerIndex: 0, explanation: "Array indexing provides direct access by position.", difficulty: "easy" },
+    { topic: "Array Analysis", question: "If an algorithm compares each element of an array with every other element, what time complexity is most likely?", options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"], answerIndex: 3, explanation: "Comparing each element with every other element typically leads to quadratic time.", difficulty: "premium" },
+  ],
+};
+
+function mergeCuratedQuestions(
+  programSlug: string,
+  questions: Omit<QuizQuestion, "id">[]
+): Omit<QuizQuestion, "id">[] {
+  const curatedQuestions = CURATED_TOPIC_QUESTION_PACKS[programSlug] ?? [];
+  const merged = [...questions];
+  const seen = new Set(
+    questions.map(
+      (question) => `${question.topic}::${question.question.trim().toLowerCase()}`
+    )
+  );
+
+  for (const question of curatedQuestions) {
+    const key = `${question.topic}::${question.question.trim().toLowerCase()}`;
+    if (!seen.has(key)) {
+      merged.push(question);
+      seen.add(key);
+    }
+  }
+
+  return merged;
+}
 
 function buildJavaQuestionBank(): QuizQuestion[] {
   const questions: Omit<QuizQuestion, "id">[] = [
@@ -147,9 +224,14 @@ function buildJavaQuestionBank(): QuizQuestion[] {
     },
     {
       topic: "Output",
-      question: "Output of the code:",
+      question: "What do `==` and `equals()` print for these Java strings?",
       codeSnippet: "String s1 = \"java\";\nString s2 = new String(\"java\");\nSystem.out.println(s1 == s2);\nSystem.out.println(s1.equals(s2));",
-      options: ["true true", "false true", "true false", "false false"],
+      options: [
+        "First line prints true, second line prints true",
+        "First line prints false, second line prints true",
+        "First line prints true, second line prints false",
+        "First line prints false, second line prints false",
+      ],
       answerIndex: 1,
       explanation: "`==` compares reference (false), `equals` compares content (true).",
       difficulty: "advanced",
@@ -180,7 +262,7 @@ function buildJavaQuestionBank(): QuizQuestion[] {
     },
     {
       topic: "Output",
-      question: "Output of this code:",
+      question: "What is the sum printed by this enhanced for-loop?",
       codeSnippet: "int[] a = {2, 4, 6};\nint sum = 0;\nfor (int v : a) sum += v;\nSystem.out.println(sum);",
       options: ["8", "10", "12", "14"],
       answerIndex: 2,
@@ -230,7 +312,7 @@ function buildJavaQuestionBank(): QuizQuestion[] {
     },
     {
       topic: "Output",
-      question: "Output of this code:",
+      question: "What sequence is printed by this while loop?",
       codeSnippet: "int n = 3;\nwhile (n > 0) {\n  System.out.print(n + \" \");\n  n--;\n}",
       options: ["1 2 3", "3 2 1", "3 2 1 0", "0 1 2 3"],
       answerIndex: 1,
@@ -255,7 +337,7 @@ function buildJavaQuestionBank(): QuizQuestion[] {
     },
     {
       topic: "Output",
-      question: "Output of this code:",
+      question: "What string does this StringBuilder code print?",
       codeSnippet: "StringBuilder sb = new StringBuilder(\"ab\");\nsb.append(\"cd\");\nSystem.out.println(sb.toString());",
       options: ["ab", "abcd", "cdab", "ab cd"],
       answerIndex: 1,
@@ -264,7 +346,7 @@ function buildJavaQuestionBank(): QuizQuestion[] {
     },
   ];
 
-  return questions.map((question, index) => ({
+  return mergeCuratedQuestions("java-programming", questions).map((question, index) => ({
     id: index + 1,
     ...question,
   }));
@@ -289,7 +371,7 @@ function buildPythonQuestionBank(): QuizQuestion[] {
     { topic: "Async", question: "What is true for `async def`?", options: ["Runs in separate process by default", "Must always use threads", "Returns coroutine object", "Cannot use await"], answerIndex: 2, explanation: "Calling async function returns coroutine until awaited.", difficulty: "premium" },
   ];
 
-  return questions.map((question, index) => ({ id: index + 1, ...question }));
+  return mergeCuratedQuestions("python-programming", questions).map((question, index) => ({ id: index + 1, ...question }));
 }
 
 function buildGoQuestionBank(): QuizQuestion[] {
@@ -311,7 +393,7 @@ function buildGoQuestionBank(): QuizQuestion[] {
     { topic: "Complexity", question: "Average key lookup complexity in Go map?", options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"], answerIndex: 0, explanation: "Hash maps are average O(1).", difficulty: "premium" },
   ];
 
-  return questions.map((question, index) => ({ id: index + 1, ...question }));
+  return mergeCuratedQuestions("go-programming", questions).map((question, index) => ({ id: index + 1, ...question }));
 }
 
 function buildCppQuestionBank(): QuizQuestion[] {
@@ -333,7 +415,7 @@ function buildCppQuestionBank(): QuizQuestion[] {
     { topic: "Modern C++", question: "`unique_ptr` provides:", options: ["shared ownership", "exclusive ownership", "manual delete only", "raw pointer aliasing"], answerIndex: 1, explanation: "unique_ptr owns object exclusively.", difficulty: "premium" },
   ];
 
-  return questions.map((question, index) => ({ id: index + 1, ...question }));
+  return mergeCuratedQuestions("cpp-programming", questions).map((question, index) => ({ id: index + 1, ...question }));
 }
 
 function buildJavaScriptQuestionBank(): QuizQuestion[] {
@@ -347,16 +429,16 @@ function buildJavaScriptQuestionBank(): QuizQuestion[] {
     { topic: "Strings", question: "Which syntax supports embedded expressions in strings?", options: ["'single quotes'", "\"double quotes\"", "Backticks `...`", "[]"], answerIndex: 2, explanation: "Template literals use backticks.", difficulty: "easy" },
     { topic: "Numbers", question: "What is `typeof NaN`?", options: ["nan", "undefined", "number", "object"], answerIndex: 2, explanation: "NaN is of type number.", difficulty: "easy" },
     { topic: "Arrays", question: "After `const a=[1,2]; a.push(3);`, `a.length` is:", options: ["2", "3", "Error", "undefined"], answerIndex: 1, explanation: "push adds one item, length becomes 3.", difficulty: "easy" },
-    { topic: "Output", question: "Output?", codeSnippet: "console.log('5' + 2)", options: ["7", "52", "Error", "NaN"], answerIndex: 1, explanation: "String concatenation produces '52'.", difficulty: "easy" },
+    { topic: "Output", question: "What is printed by `console.log('5' + 2)`?", codeSnippet: "console.log('5' + 2)", options: ["7", "52", "Error", "NaN"], answerIndex: 1, explanation: "String concatenation produces '52'.", difficulty: "easy" },
     { topic: "Functions", question: "Which keyword declares a standard function?", options: ["def", "func", "function", "fn"], answerIndex: 2, explanation: "JavaScript uses `function` keyword.", difficulty: "easy" },
     { topic: "Promises", question: "Purpose of `await`?", options: ["Creates promise", "Pauses async function until promise settles", "Blocks entire JS runtime", "Converts to callback"], answerIndex: 1, explanation: "await pauses inside async function only.", difficulty: "advanced" },
     { topic: "Closures", question: "Closure means:", options: ["Function with no params", "Function remembering outer scope", "Object with private class", "Module import"], answerIndex: 1, explanation: "Closure retains lexical environment.", difficulty: "advanced" },
-    { topic: "Output", question: "Output?", codeSnippet: "let x = 1;\nfunction f(){\n  console.log(x);\n  let x = 2;\n}\nf();", options: ["1", "2", "undefined", "ReferenceError"], answerIndex: 3, explanation: "Temporal dead zone before local let init.", difficulty: "advanced" },
+    { topic: "Output", question: "What happens when this function reads `x` before local `let` initialization?", codeSnippet: "let x = 1;\nfunction f(){\n  console.log(x);\n  let x = 2;\n}\nf();", options: ["1", "2", "undefined", "ReferenceError"], answerIndex: 3, explanation: "Temporal dead zone before local let init.", difficulty: "advanced" },
     { topic: "Complexity", question: "Time complexity of linear array scan is:", options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"], answerIndex: 2, explanation: "Scan may inspect all n elements.", difficulty: "premium" },
     { topic: "Event Loop", question: "Which runs first?", codeSnippet: "console.log('A');\nsetTimeout(()=>console.log('B'),0);\nPromise.resolve().then(()=>console.log('C'));", options: ["A B C", "A C B", "C A B", "B A C"], answerIndex: 1, explanation: "Sync A, microtask C, then timer B.", difficulty: "premium" },
   ];
 
-  return questions.map((question, index) => ({ id: index + 1, ...question }));
+  return mergeCuratedQuestions("javascript-programming", questions).map((question, index) => ({ id: index + 1, ...question }));
 }
 
 function buildCSharpQuestionBank(): QuizQuestion[] {
@@ -379,7 +461,7 @@ function buildCSharpQuestionBank(): QuizQuestion[] {
     { topic: "OOP", question: "Difference between `abstract` and `interface` (core idea)?", options: ["Both identical always", "Interface defines contract; abstract may include implementation", "Abstract cannot have methods", "Interface must have fields with state"], answerIndex: 1, explanation: "Interface is contract; abstract can share base behavior.", difficulty: "premium" },
   ];
 
-  return questions.map((question, index) => ({ id: index + 1, ...question }));
+  return mergeCuratedQuestions("csharp-programming", questions).map((question, index) => ({ id: index + 1, ...question }));
 }
 
 function buildRustQuestionBank(): QuizQuestion[] {
@@ -396,12 +478,12 @@ function buildRustQuestionBank(): QuizQuestion[] {
     { topic: "Booleans", question: "Boolean type in Rust is:", options: ["bool", "boolean", "Bool", "truth"], answerIndex: 0, explanation: "Rust boolean type is `bool`.", difficulty: "easy" },
     { topic: "Borrowing", question: "Meaning of `&value` in Rust?", options: ["Move ownership", "Immutable borrow", "Mutable borrow", "Raw pointer only"], answerIndex: 1, explanation: "`&` creates immutable reference.", difficulty: "advanced" },
     { topic: "Result", question: "Idiomatic error type for success/failure?", options: ["Option<T>", "Result<T, E>", "bool", "panic! only"], answerIndex: 1, explanation: "Result represents recoverable errors.", difficulty: "advanced" },
-    { topic: "Output", question: "What is printed?", codeSnippet: "let v = vec![1,2,3];\nprintln!(\"{}\", v.len());", options: ["2", "3", "4", "Compile error"], answerIndex: 1, explanation: "Vector has 3 elements.", difficulty: "advanced" },
+    { topic: "Output", question: "What does `v.len()` print for this Rust vector?", codeSnippet: "let v = vec![1,2,3];\nprintln!(\"{}\", v.len());", options: ["2", "3", "4", "Compile error"], answerIndex: 1, explanation: "Vector has 3 elements.", difficulty: "advanced" },
     { topic: "Complexity", question: "Average lookup complexity in HashMap is:", options: ["O(1)", "O(log n)", "O(n)", "O(n^2)"], answerIndex: 0, explanation: "HashMap average lookup is O(1).", difficulty: "premium" },
     { topic: "Traits", question: "Trait in Rust is closest to:", options: ["Thread", "Interface/behavior contract", "Garbage collector", "Package manager"], answerIndex: 1, explanation: "Trait defines shared behavior signatures.", difficulty: "premium" },
   ];
 
-  return questions.map((question, index) => ({ id: index + 1, ...question }));
+  return mergeCuratedQuestions("rust-programming", questions).map((question, index) => ({ id: index + 1, ...question }));
 }
 
 function buildPseudoCodeQuestionBank(): QuizQuestion[] {
@@ -506,7 +588,7 @@ function buildPseudoCodeQuestionBank(): QuizQuestion[] {
     },
     {
       topic: "Complexity",
-      question: "What is time complexity?",
+      question: "What is the time complexity of doubling `i` until it reaches `n`?",
       codeSnippet: "i <- 1\nWHILE i < n\n  i <- i * 2",
       options: ["O(n)", "O(log n)", "O(n log n)", "O(1)"],
       answerIndex: 1,
@@ -515,7 +597,7 @@ function buildPseudoCodeQuestionBank(): QuizQuestion[] {
     },
     {
       topic: "Complexity",
-      question: "What is time complexity?",
+      question: "What is the time complexity of these two nested loops?",
       codeSnippet: "FOR i <- 1 TO n\n  FOR j <- 1 TO n\n    constant work",
       options: ["O(n)", "O(log n)", "O(n^2)", "O(n^3)"],
       answerIndex: 2,
@@ -524,7 +606,7 @@ function buildPseudoCodeQuestionBank(): QuizQuestion[] {
     },
     {
       topic: "Complexity",
-      question: "What is time complexity?",
+      question: "What is the time complexity of this two-pointer loop?",
       codeSnippet:
         "left <- 0, right <- n - 1\nWHILE left < right\n  IF condition THEN left <- left + 1 ELSE right <- right - 1",
       options: ["O(log n)", "O(n)", "O(n^2)", "O(1)"],
@@ -554,7 +636,7 @@ function buildPseudoCodeQuestionBank(): QuizQuestion[] {
     },
   ];
 
-  return questions.map((question, index) => ({
+  return mergeCuratedQuestions("pseudocode-programming", questions).map((question, index) => ({
     id: index + 1,
     ...question,
   }));

@@ -1,10 +1,49 @@
+import type { Metadata } from "next";
 import { programs } from "../ProgramData";
 import { notFound } from "next/navigation";
-import { getApplyLink } from "../getApplyLink";
 
 type Props = {
     params: Promise<{ slug: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { slug } = await params;
+    const program = programs.find((p) => p.slug === slug);
+
+    if (!program) {
+        return {
+            title: "Program Not Found",
+        };
+    }
+
+    const techKeywords = program.techStack.flatMap((stack) => stack.items);
+    const slugKeyword = program.slug.replace(/-/g, " ");
+    const programKeywords = [
+        program.title.toLowerCase(),
+        `${program.title.toLowerCase()} training`,
+        `${program.title.toLowerCase()} program`,
+        `${program.title.toLowerCase()} course`,
+        slugKeyword,
+        "project based training",
+        "software development training",
+        "online programming training",
+        ...techKeywords.map((item) => item.toLowerCase()),
+    ];
+
+    return {
+        title: `${program.title} Program`,
+        description: `${program.tagline} Duration: ${program.duration}. Level: ${program.level}. Learn with project-based training at Inzivoo.`,
+        keywords: Array.from(new Set(programKeywords)),
+        alternates: {
+            canonical: `/programs/${program.slug}`,
+        },
+        openGraph: {
+            title: `${program.title} Program | Inzivoo`,
+            description: `${program.tagline} Explore outcomes, tech stack, and program details on Inzivoo.`,
+            url: `/programs/${program.slug}`,
+        },
+    };
+}
 
 export default async function ProgramDetailPage({ params }: Props) {
     const { slug } = await params;
