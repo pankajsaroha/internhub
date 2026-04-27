@@ -51,7 +51,7 @@ export default function AdminPage() {
             setModal({
                 show: true,
                 title: "Action Restricted",
-                message: "You are currently logged in with a student account. Please log out from the student dashboard before accessing the Admin Portal."
+                message: "You are currently logged in with a user account. Please log out from the user dashboard before accessing the Admin Portal."
             });
             return;
         }
