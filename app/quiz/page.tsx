@@ -1,185 +1,103 @@
 import Link from "next/link";
 import { quizPrograms } from "./quizData";
+import { BrainCircuit, ArrowRight, Zap, Code2, Globe, ShieldCheck } from "lucide-react";
 
-const quizCardStyle: Record<string, { accent: string; tag: string; card: string; iconClass: string }> = {
+const quizCardStyle: Record<string, { color: string; icon: any }> = {
   "java-programming": {
-    accent: "quiz-card-purple",
-    tag: "Language",
-    card: "card card-purple",
-    iconClass: "purple",
+    color: "text-purple-500",
+    icon: <Code2 className="h-6 w-6" />,
   },
   "python-programming": {
-    accent: "quiz-card-emerald",
-    tag: "Language",
-    card: "card card-emerald",
-    iconClass: "emerald",
+    color: "text-emerald-500",
+    icon: <Zap className="h-6 w-6" />,
   },
   "go-programming": {
-    accent: "quiz-card-sky",
-    tag: "Language",
-    card: "card card-sky",
-    iconClass: "sky",
+    color: "text-sky-500",
+    icon: <Globe className="h-6 w-6" />,
   },
   "cpp-programming": {
-    accent: "quiz-card-indigo",
-    tag: "Language",
-    card: "card card-indigo",
-    iconClass: "indigo",
+    color: "text-indigo-500",
+    icon: <Code2 className="h-6 w-6" />,
   },
   "javascript-programming": {
-    accent: "quiz-card-green",
-    tag: "Language",
-    card: "card card-green",
-    iconClass: "green",
+    color: "text-green-500",
+    icon: <Code2 className="h-6 w-6" />,
   },
   "csharp-programming": {
-    accent: "quiz-card-sky",
-    tag: "Language",
-    card: "card card-sky",
-    iconClass: "sky",
+    color: "text-sky-500",
+    icon: <Code2 className="h-6 w-6" />,
   },
   "rust-programming": {
-    accent: "quiz-card-purple",
-    tag: "Language",
-    card: "card card-purple",
-    iconClass: "purple",
+    color: "text-purple-500",
+    icon: <ShieldCheck className="h-6 w-6" />,
   },
   "pseudocode-programming": {
-    accent: "quiz-card-blue",
-    tag: "Algorithm",
-    card: "card card-blue",
-    iconClass: "blue",
+    color: "text-blue-500",
+    icon: <BrainCircuit className="h-6 w-6" />,
   },
 };
-
-function renderProgramIcon(slug: string) {
-  switch (slug) {
-    case "java-programming":
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M8 17h6a3 3 0 003-3V7H5v7a3 3 0 003 3z"
-            stroke="#a855f7"
-            strokeWidth="2"
-          />
-          <path d="M17 9h1a2 2 0 010 4h-1" stroke="#a855f7" strokeWidth="2" />
-          <path
-            d="M9 3s2 1 2 3-2 2-2 4"
-            stroke="#a855f7"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    case "python-programming":
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <path d="M12 3c4 0 4 2 4 4H8c0-2 0-4 4-4z" stroke="#10b981" strokeWidth="2" />
-          <path d="M12 21c-4 0-4-2-4-4h8c0 2 0 4-4 4z" stroke="#10b981" strokeWidth="2" />
-          <circle cx="10" cy="6" r="1" fill="#10b981" />
-          <circle cx="14" cy="18" r="1" fill="#10b981" />
-        </svg>
-      );
-    case "go-programming":
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <path d="M4 12h10l-3-3" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" />
-          <path d="M14 12l-3 3" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" />
-          <circle cx="18" cy="12" r="2" stroke="#0ea5e9" strokeWidth="2" />
-        </svg>
-      );
-    case "cpp-programming":
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="4" width="18" height="16" rx="3" stroke="#6366f1" strokeWidth="2" />
-          <path d="M9 12h4" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" />
-          <path d="M15 10v4" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" />
-          <path d="M18 10v4" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      );
-    case "javascript-programming":
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <rect x="4" y="3" width="16" height="18" rx="2" stroke="#22c55e" strokeWidth="2" />
-          <path
-            d="M9 9h2v6a2 2 0 01-2 2"
-            stroke="#22c55e"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M14 15c0 1 1 2 2 2s2-1 2-2c0-2-4-1-4-3 0-1 1-2 2-2s2 1 2 2"
-            stroke="#22c55e"
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-        </svg>
-      );
-    case "csharp-programming":
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <rect x="3" y="4" width="18" height="16" rx="3" stroke="#0ea5e9" strokeWidth="2" />
-          <path d="M8 12h4" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" />
-          <path d="M15 10v4" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" />
-          <path d="M18 10v4" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      );
-    case "rust-programming":
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="8" stroke="#a855f7" strokeWidth="2" />
-          <circle cx="12" cy="12" r="2" stroke="#a855f7" strokeWidth="2" />
-          <path d="M12 4v2M12 18v2M4 12h2M18 12h2" stroke="#a855f7" strokeWidth="2" />
-        </svg>
-      );
-    case "pseudocode-programming":
-      return (
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-          <rect x="4" y="3" width="16" height="18" rx="2" stroke="#3b82f6" strokeWidth="2" />
-          <path d="M8 8h8M8 12h6M8 16h5" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" />
-          <path d="M14 12l2 2 3-3" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" />
-        </svg>
-      );
-    default:
-      return null;
-  }
-}
 
 export default function QuizListPage() {
   const languageQuizzes = quizPrograms
     .sort((a, b) => a.title.localeCompare(b.title));
 
-  function renderQuizCards(programs: typeof quizPrograms) {
-    return programs.map((program) => {
-      const style = quizCardStyle[program.slug];
-      return (
-        <div key={program.slug} className={style?.card ?? "card"}>
-          <div className={`program-icon ${style?.iconClass ?? ""}`}>
-            {renderProgramIcon(program.slug)}
-          </div>
-          <span className="program-tag">{style?.tag ?? "Program"}</span>
-          <h3>{program.title}</h3>
-          <p>{program.description}</p>
-          <Link href={`/quiz/${program.slug}`} className="view-link">
-            Start Quiz
-          </Link>
-        </div>
-      );
-    });
-  }
-
   return (
-    <section className="page-container quiz-page">
-      <header className="quiz-list-header">
-        <h1>Programming Quizzes</h1>
-        <p>
-          Practice topic-wise quizzes with fresher and experienced levels to build confidence step by step.
-        </p>
-      </header>
+    <main className="min-h-screen bg-background">
+      {/* Premium Hero */}
+      <section className="relative pt-20 pb-16 border-b border-border bg-[#0d1117] overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -mr-32 -mt-32 pointer-events-none" />
+        
+        <div className="container relative z-10">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 text-white/70 text-[10px] font-black tracking-widest uppercase mb-6 border border-white/10 backdrop-blur-sm">
+              <BrainCircuit className="h-3 w-3 text-primary" />
+              Skill Validation
+            </div>
+            <h1 className="text-4xl lg:text-6xl font-black tracking-tight mb-4 text-white leading-tight">
+                Technical <br />
+                <span className="text-primary text-glow-sm">Assessments</span>
+            </h1>
+            <p className="text-base lg:text-lg text-gray-400 leading-relaxed max-w-2xl opacity-80">
+              Validate your expertise with production-grade quizzes. 
+              Switch between Fresher, Experienced, and Premium tiers.
+            </p>
+          </div>
+        </div>
+      </section>
 
-      <div className="cards">
-        {renderQuizCards(languageQuizzes)}
-      </div>
-    </section>
+      {/* Modern Quiz Grid */}
+      <section className="py-20">
+        <div className="container">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {languageQuizzes.map((program) => {
+              const style = quizCardStyle[program.slug] || { color: "text-primary", icon: <BrainCircuit className="h-6 w-6" /> };
+              return (
+                <Link 
+                  key={program.slug} 
+                  href={`/quiz/${program.slug}`}
+                  className="glass-card p-8 rounded-[32px] border border-border hover:border-primary/50 transition-all group flex flex-col justify-between"
+                >
+                  <div>
+                    <div className={`w-12 h-12 rounded-xl bg-muted flex items-center justify-center mb-6 group-hover:scale-110 transition-transform ${style.color}`}>
+                      {style.icon}
+                    </div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary mb-2 opacity-60">Quiz Module</div>
+                    <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
+                      {program.title}
+                    </h3>
+                    <p className="text-sm text-secondary leading-relaxed opacity-70 mb-8 line-clamp-2">
+                      {program.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] font-black uppercase text-primary tracking-widest">
+                    Start Assessment <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

@@ -28,13 +28,18 @@ export default function Hero() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center gap-4 lg:gap-6" data-aos="fade-up" data-aos-delay="200">
-                            <a href="/system-design" className="btn btn-primary px-10 py-5 text-lg w-full sm:w-auto shadow-xl shadow-primary/20 group">
-                                Start Learning
+                            <a href="/demo/url-shortener" className="btn btn-primary px-10 py-5 text-lg w-full sm:w-auto shadow-xl shadow-primary/20 group">
+                                Start Free Project
                                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                             </a>
-                            <a href="/demo/url-shortener" className="btn btn-secondary px-10 py-5 text-lg w-full sm:w-auto border-2 hover:bg-muted transition-all flex items-center gap-2">
-                                <Play className="h-4 w-4 fill-current" /> Live Demo
-                            </a>
+                            <div className="flex flex-col items-center sm:items-start gap-1">
+                                <a href="/demo/url-shortener" className="text-sm font-bold flex items-center gap-2 hover:text-primary transition-colors">
+                                    <Play className="h-4 w-4 fill-current" /> See Live Demo
+                                </a>
+                                <span className="text-[10px] font-bold text-secondary uppercase tracking-widest px-2 py-0.5 rounded bg-muted/50">
+                                    No Login Required
+                                </span>
+                            </div>
                         </div>
 
                         <div className="mt-16 pt-8 border-t border-border/50 flex flex-wrap items-center justify-center lg:justify-start gap-10 opacity-50 font-bold text-xs tracking-widest uppercase" data-aos="fade-up" data-aos-delay="300">

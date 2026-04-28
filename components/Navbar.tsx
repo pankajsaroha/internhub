@@ -68,25 +68,25 @@ export default function Navbar() {
                         <BookOpen className="h-4 w-4 opacity-50" /> Programs
                     </Link>
                     <div className="relative group/nav">
-                        <button className="text-sm font-semibold hover:text-primary transition-colors flex items-center gap-1.5 py-6">
+                        <Link href="/system-design" className="text-sm font-semibold hover:text-primary transition-colors flex items-center gap-1.5 py-6">
                             <ShieldCheck className="h-4 w-4 opacity-50" /> System Design
                             <ChevronDown className="h-3 w-3 transition-transform group-hover/nav:rotate-180" />
-                        </button>
+                        </Link>
                         
                         <div className="absolute top-full -left-4 w-[480px] pt-2 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 transform group-hover/nav:translate-y-0 translate-y-2 z-50">
                             <div className="glass-card p-6 rounded-3xl border border-border shadow-2xl overflow-hidden grid grid-cols-2 gap-4">
-                                <Link href="/system-design" className="flex gap-4 p-4 rounded-2xl hover:bg-primary/5 transition-all group/item">
+                                <Link href="/system-design/architecture" className="flex gap-4 p-4 rounded-2xl hover:bg-primary/5 transition-all group/item">
                                     <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0 group-hover/item:scale-110 transition-transform">
                                         <Layers className="h-5 w-5 text-blue-500" />
                                     </div>
                                     <div>
                                         <div className="text-xs font-black uppercase tracking-widest text-primary mb-1">Architecture</div>
                                         <div className="text-sm font-bold mb-1">System Design</div>
-                                        <div className="text-[10px] text-secondary leading-tight">Distributed systems & scalability.</div>
+                                        <div className="text-[10px] text-secondary leading-tight">Distributed systems & scaling.</div>
                                     </div>
                                 </Link>
 
-                                <Link href="/system-design#languages" className="flex gap-4 p-4 rounded-2xl hover:bg-primary/5 transition-all group/item">
+                                <Link href="/system-design/internals" className="flex gap-4 p-4 rounded-2xl hover:bg-primary/5 transition-all group/item">
                                     <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center shrink-0 group-hover/item:scale-110 transition-transform">
                                         <Cpu className="h-5 w-5 text-indigo-500" />
                                     </div>
@@ -97,25 +97,25 @@ export default function Navbar() {
                                     </div>
                                 </Link>
 
-                                <Link href="/system-design#infra" className="flex gap-4 p-4 rounded-2xl hover:bg-primary/5 transition-all group/item">
+                                <Link href="/system-design/infrastructure" className="flex gap-4 p-4 rounded-2xl hover:bg-primary/5 transition-all group/item">
                                     <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0 group-hover/item:scale-110 transition-transform">
                                         <Server className="h-5 w-5 text-emerald-500" />
                                     </div>
                                     <div>
                                         <div className="text-xs font-black uppercase tracking-widest text-primary mb-1">Infrastructure</div>
                                         <div className="text-sm font-bold mb-1">Cloud Native</div>
-                                        <div className="text-[10px] text-secondary leading-tight">Kubernetes & platform engineering.</div>
+                                        <div className="text-[10px] text-secondary leading-tight">Kubernetes & Platform engineering.</div>
                                     </div>
                                 </Link>
 
-                                <Link href="/system-design#interviews" className="flex gap-4 p-4 rounded-2xl hover:bg-primary/5 transition-all group/item">
+                                <Link href="/system-design/interviews" className="flex gap-4 p-4 rounded-2xl hover:bg-primary/5 transition-all group/item">
                                     <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0 group-hover/item:scale-110 transition-transform">
                                         <ShieldCheck className="h-5 w-5 text-amber-500" />
                                     </div>
                                     <div>
-                                        <div className="text-xs font-black uppercase tracking-widest text-primary mb-1">Careers</div>
-                                        <div className="text-sm font-bold mb-1">Interview Prep</div>
-                                        <div className="text-[10px] text-secondary leading-tight">FAANG design & LLD mastery.</div>
+                                        <div className="text-xs font-black uppercase tracking-widest text-primary mb-1">Interviews</div>
+                                        <div className="text-sm font-bold mb-1">FAANG Series</div>
+                                        <div className="text-[10px] text-secondary leading-tight">Master technical interviews.</div>
                                     </div>
                                 </Link>
                             </div>
@@ -215,8 +215,11 @@ export default function Navbar() {
                         <Link href="/programs" className="text-lg font-bold flex items-center gap-3" onClick={() => setIsMenuOpen(false)}>
                            <BookOpen className="h-5 w-5 text-primary" /> Programs
                         </Link>
+                        <Link href="/articles" className="text-lg font-bold flex items-center gap-3" onClick={() => setIsMenuOpen(false)}>
+                           <BookOpen className="h-5 w-5 text-primary" /> Engineering Blog
+                        </Link>
                         <Link href="/system-design" className="text-lg font-bold flex items-center gap-3" onClick={() => setIsMenuOpen(false)}>
-                           <ShieldCheck className="h-5 w-5 text-primary" /> Architecture
+                           <BrainCircuit className="h-5 w-5 text-primary" /> System Design
                         </Link>
                         <Link href="/quiz" className="text-lg font-bold flex items-center gap-3" onClick={() => setIsMenuOpen(false)}>
                            <BrainCircuit className="h-5 w-5 text-primary" /> Quizzes

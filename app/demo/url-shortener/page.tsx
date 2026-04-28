@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Terminal, Code2, GitBranch, ArrowRight, 
   CheckCircle2, Play, Layout,
@@ -8,7 +8,86 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+function InteractiveSimulator() {
+    const [url, setUrl] = useState("");
+    const [status, setStatus] = useState<"IDLE" | "HASHING" | "CACHING" | "DONE">("IDLE");
+    const [shortId, setShortId] = useState("");
+
+    const handleShorten = () => {
+        if (!url) return;
+        setStatus("HASHING");
+        setTimeout(() => setStatus("CACHING"), 800);
+        setTimeout(() => {
+            setShortId(Math.random().toString(36).substring(2, 8));
+            setStatus("DONE");
+        }, 1600);
+    };
+
+    return (
+        <div className="glass-card rounded-3xl overflow-hidden border border-border shadow-2xl relative">
+            <div className="bg-muted px-4 py-3 border-b border-border flex items-center justify-between">
+                <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500/30" />
+                    <div className="w-3 h-3 rounded-full bg-amber-500/30" />
+                    <div className="w-3 h-3 rounded-full bg-emerald-500/30" />
+                </div>
+                <div className="text-[10px] font-mono text-secondary uppercase tracking-widest">Simulator Console</div>
+            </div>
+            
+            <div className="p-8 space-y-6">
+                <div className="flex gap-2">
+                    <input 
+                        type="text" 
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                        placeholder="https://example.com/very-long-url"
+                        className="flex-grow bg-background border border-border rounded-xl px-4 py-3 text-sm focus:border-primary outline-none transition-colors"
+                    />
+                    <button 
+                        onClick={handleShorten}
+                        disabled={status !== "IDLE" && status !== "DONE"}
+                        className="btn btn-primary px-6 py-3 text-sm whitespace-nowrap"
+                    >
+                        {status === "IDLE" || status === "DONE" ? "Shorten" : "Processing..."}
+                    </button>
+                </div>
+
+                <div className="bg-[#0d1117] rounded-2xl p-6 font-mono text-xs space-y-2 min-h-[140px]">
+                    {status === "IDLE" && <div className="text-gray-500">Waiting for input...</div>}
+                    
+                    {(status === "HASHING" || status === "CACHING" || status === "DONE") && (
+                        <div className="flex gap-3">
+                            <span className="text-blue-400">[SYSTEM]</span>
+                            <span>Initializing Base62 Encoder...</span>
+                        </div>
+                    )}
+                    {(status === "HASHING" || status === "CACHING" || status === "DONE") && (
+                        <div className="flex gap-3">
+                            <span className="text-emerald-400">[DEBUG]</span>
+                            <span>Generating unique hash for "{url.substring(0, 20)}..."</span>
+                        </div>
+                    )}
+                    {(status === "CACHING" || status === "DONE") && (
+                        <div className="flex gap-3">
+                            <span className="text-amber-400">[REDIS]</span>
+                            <span>Storing mapping in cache (TTL: 24h)</span>
+                        </div>
+                    )}
+                    {status === "DONE" && (
+                        <div className="mt-4 p-4 rounded-xl bg-primary/10 border border-primary/20">
+                            <div className="text-primary font-black mb-1 text-[10px] uppercase">Resulting Link:</div>
+                            <div className="text-lg text-white font-bold">inzivoo.com/{shortId}</div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function URLShortenerDemo() {
+    const [isClient, setIsClient] = useState(false);
+    useEffect(() => setIsClient(true), []);
   const tasks = [
     {
       title: "Data Modeling",
@@ -35,60 +114,51 @@ export default function URLShortenerDemo() {
   return (
     <main className="min-h-screen bg-background">
       {/* Hero / Header */}
-      <section className="py-20 border-b border-border bg-muted/20 overflow-hidden">
+      <section className="py-24 border-b border-border bg-muted/20 overflow-hidden">
         <div className="container relative">
-          <div className="flex flex-col lg:flex-row items-center gap-16">
+          <div className="flex flex-col lg:flex-row items-center gap-20">
             <div className="lg:w-1/2" data-aos="fade-right">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-black tracking-widest uppercase mb-6 border border-primary/20">
-                <Play className="h-3 w-3 fill-current" /> Live Demo Project
+                <Zap className="h-3 w-3 fill-current" /> Live Demo Project
               </div>
-              <h1 className="text-4xl lg:text-6xl font-black tracking-tight mb-6">
-                Build a Scalable <br />
-                <span className="text-primary text-glow">URL Shortener</span>
+              <h1 className="text-4xl lg:text-7xl font-black tracking-tight mb-8 leading-[0.9]">
+                URL <span className="text-primary text-glow">Shortener</span>
               </h1>
-              <p className="text-xl text-secondary leading-relaxed mb-10">
-                Go beyond "Hello World". Build a production-grade service that 
-                handles billions of redirects with sub-millisecond latency.
+              <p className="text-xl text-secondary mb-10 leading-relaxed max-w-xl">
+                Build a production-ready URL redirection service. Master Base62 encoding, 
+                Redis caching, and distributed ID generation.
               </p>
-              <div className="flex flex-wrap gap-6">
+              
+              <div className="flex flex-wrap gap-6 mb-12">
                 <a href="#build" className="btn btn-primary px-10 py-5 text-lg shadow-xl shadow-primary/20">
                   Start Building Now
                 </a>
-                <div className="flex items-center gap-3 text-secondary text-sm font-bold">
-                  <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-                  No Sign-up required to start
+                <div className="flex flex-col justify-center">
+                  <div className="flex items-center gap-2 text-emerald-500 font-bold text-sm">
+                    <CheckCircle2 className="h-4 w-4" /> Free Starter Kit
+                  </div>
+                  <div className="text-[10px] text-secondary font-bold uppercase tracking-widest">No Sign-up Required</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-6 rounded-2xl bg-muted/50 border border-border">
+                  <h3 className="font-bold mb-1 flex items-center gap-2 text-sm uppercase tracking-wider">
+                    <Database className="h-4 w-4 text-primary" /> 100k Req/s
+                  </h3>
+                  <p className="text-secondary text-[11px]">Design for massive scale and global distribution.</p>
+                </div>
+                <div className="p-6 rounded-2xl bg-muted/50 border border-border">
+                  <h3 className="font-bold mb-1 flex items-center gap-2 text-sm uppercase tracking-wider">
+                    <Zap className="h-4 w-4 text-amber-500" /> &lt;10ms Latency
+                  </h3>
+                  <p className="text-secondary text-[11px]"> Redirection overhead must be invisible to users.</p>
                 </div>
               </div>
             </div>
-
-            <div className="lg:w-1/2 relative" data-aos="fade-left">
-              <div className="absolute inset-0 bg-primary/10 blur-[100px] rounded-full" />
-              <div className="glass-card rounded-3xl overflow-hidden border border-border shadow-2xl">
-                <div className="bg-muted px-4 py-3 border-b border-border flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500/30" />
-                    <div className="w-3 h-3 rounded-full bg-amber-500/30" />
-                    <div className="w-3 h-3 rounded-full bg-emerald-500/30" />
-                  </div>
-                  <div className="text-[10px] font-mono text-secondary">output.log</div>
-                </div>
-                <div className="p-8 font-mono text-xs space-y-3">
-                  <div className="flex gap-3">
-                    <span className="text-emerald-500 font-bold">[200 OK]</span>
-                    <span className="text-secondary">POST /v1/shorten</span>
-                    <span className="text-primary">"https://google.com/search?q=..."</span>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="text-amber-500 font-bold">[CACHE MISS]</span>
-                    <span className="text-secondary">Fetching ID: 8xK9p2</span>
-                  </div>
-                  <div className="flex gap-3">
-                    <span className="text-blue-500 font-bold">[REDIRECT]</span>
-                    <span className="text-secondary">8xK9p2 {"->"} Redirecting to Source</span>
-                    <span className="text-emerald-500 font-bold">8ms</span>
-                  </div>
-                </div>
-              </div>
+            
+            <div className="lg:w-1/2 w-full" data-aos="fade-left">
+              {isClient && <InteractiveSimulator />}
             </div>
           </div>
         </div>
@@ -121,6 +191,32 @@ export default function URLShortenerDemo() {
                 "Design a system that generates a unique 6-character alias for any URL 
                 and manages global redirection at 100k requests per second."
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Engineering Approach */}
+      <section className="py-24 bg-muted/5">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-3xl font-black mb-12 text-center">How to Approach this Project</h2>
+            <div className="grid gap-8">
+              {[
+                { title: "Define the ID Space", desc: "Calculate how many unique links you'll need. For 6 characters in Base62, you get 56.8 Billion unique IDs. Is that enough for your scale?" },
+                { title: "Choose Hashing Strategy", desc: "Decide between an auto-incrementing counter (requires central ID service) or hashing the URL (requires collision management)." },
+                { title: "Implement Cache-Aside", desc: "Don't let every redirect hit your DB. Use Redis to store the most frequent links with a TTL." }
+              ].map((step, i) => (
+                <div key={i} className="flex gap-6 items-start p-6 rounded-3xl border border-border bg-card">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-black shrink-0">
+                    {i + 1}
+                  </div>
+                  <div>
+                    <h3 className="font-bold mb-1">{step.title}</h3>
+                    <p className="text-secondary text-sm">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -226,9 +322,9 @@ export default function URLShortenerDemo() {
               <Link href="/apply" className="btn btn-primary px-12 py-5 text-lg shadow-2xl shadow-primary/30">
                 Get the Starter Kit
               </Link>
-              <button className="px-8 py-5 font-bold text-secondary hover:text-foreground transition-colors">
-                View Documentation
-              </button>
+              <Link href="/articles/url-shortener" className="px-8 py-5 font-bold text-secondary hover:text-primary transition-colors flex items-center gap-2 group">
+                View Documentation <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
             </div>
           </div>
         </div>

@@ -46,8 +46,8 @@ export default function ResourceHub() {
               you master the complexities of modern software systems.
             </p>
           </div>
-          <Link href="/programs" className="group flex items-center gap-2 text-primary font-bold">
-            Explore all resources
+          <Link href="/articles" className="group flex items-center gap-2 text-primary font-bold">
+            Explore Engineering Library
             <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
