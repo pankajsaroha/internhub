@@ -1,28 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { quizPrograms } from "./quizData";
-
-export const metadata: Metadata = {
-  title: "Programming Quizzes",
-  description:
-    "Practice Java, Python, Go, JavaScript, C++, C#, Rust, and pseudocode quizzes on Inzivoo with level-based technical MCQs.",
-  keywords: [
-    "programming quizzes",
-    "java quiz",
-    "python quiz",
-    "go quiz",
-    "javascript quiz",
-    "c++ quiz",
-    "c# quiz",
-    "rust quiz",
-    "technical mcq quiz",
-    "coding interview quiz",
-    "level based programming quiz",
-  ],
-  alternates: {
-    canonical: "/quiz",
-  },
-};
+import { BrainCircuit, ArrowRight, Zap, Code2, Globe, ShieldCheck } from "lucide-react";
 
 const quizCardStyle: Record<string, { color: string; icon: any }> = {
   "java-programming": {
@@ -85,22 +64,41 @@ export default function QuizListPage() {
             </p>
           </div>
         </div>
-      );
-    });
-  }
+      </section>
 
-  return (
-    <section className="page-container quiz-page">
-      <header className="quiz-list-header">
-        <h1>Programming Quizzes</h1>
-        <p>
-          Practice level-based programming quizzes to build confidence in core concepts, coding logic, and technical interview preparation.
-        </p>
-      </header>
-
-      <div className="cards">
-        {renderQuizCards(languageQuizzes)}
-      </div>
-    </section>
+      {/* Modern Quiz Grid */}
+      <section className="py-20">
+        <div className="container">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {languageQuizzes.map((program) => {
+              const style = quizCardStyle[program.slug] || { color: "text-primary", icon: <BrainCircuit className="h-6 w-6" /> };
+              return (
+                <Link 
+                  key={program.slug} 
+                  href={`/quiz/${program.slug}`}
+                  className="glass-card p-8 rounded-[32px] border border-border hover:border-primary/50 transition-all group flex flex-col justify-between"
+                >
+                  <div>
+                    <div className={`w-12 h-12 rounded-xl bg-muted flex items-center justify-center mb-6 group-hover:scale-110 transition-transform ${style.color}`}>
+                      {style.icon}
+                    </div>
+                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-secondary mb-2 opacity-60">Quiz Module</div>
+                    <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors leading-tight">
+                      {program.title}
+                    </h3>
+                    <p className="text-sm text-secondary leading-relaxed opacity-70 mb-8 line-clamp-2">
+                      {program.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] font-black uppercase text-primary tracking-widest">
+                    Start Assessment <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
