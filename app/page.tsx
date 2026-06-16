@@ -1,18 +1,11 @@
-import type { Metadata } from "next";
+import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Programs from "../components/Programs";
 import Certificate from "../components/Certificate";
 import Steps from "../components/Steps";
 import Testimonials from "../components/Testimonials";
-
-export const metadata: Metadata = {
-  title: "Project-Based Training and Programming Quizzes",
-  description:
-    "Explore Inzivoo project-based training programs, technical quizzes, practical learning paths, and certificates for software learners.",
-  alternates: {
-    canonical: "/",
-  },
-};
+import Footer from "../components/Footer";
+import AOSInit from "../components/AOSInit";
 
 export default function Home() {
   const structuredData = {
@@ -33,10 +26,12 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <Hero />
-      <Programs />
-      <Certificate />
-      <Steps />
-      <Testimonials />
+      <CertificationsSection />
+      <ResourceHub />
+      <ProjectDemo />
+      <RealProjects />
+      <LearningPath />
+      <Outcome />
     </>
   );
 }

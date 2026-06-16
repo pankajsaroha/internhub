@@ -2,9 +2,13 @@
 
 import React, { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Script from "next/script";
+import { useRouter, useSearchParams } from "next/navigation";
+import { 
+  Trophy, Flame, Target, CheckCircle2, 
+  ArrowRight, Zap, Star, Layout, 
+  Award, Clock, ChevronRight, Activity, Terminal
+} from "lucide-react";
+import Link from "next/link";
 
 const PROGRAM_LABEL_MAP: Record<string, string> = {
     backend: "Backend Development",
@@ -25,96 +29,27 @@ interface Application {
     full_name?: string | null;
 }
 
-interface Certificate {
-    certificate_id: string;
-    program: string;
-    payment_status: string;
-    created_at: string;
-}
-
-interface UserProfileRow {
-    name: string | null;
-}
-
-function renderProgramIcon(slug: string) {
-    const normalized = (slug || "").toLowerCase();
-    switch (normalized) {
-        case "frontend":
-        case "frontend-development":
-            return (
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                    <rect x="3" y="4" width="18" height="14" rx="2" stroke="#3b82f6" strokeWidth="2" />
-                    <path d="M3 8h18" stroke="#3b82f6" strokeWidth="2" />
-                    <circle cx="6" cy="6" r="1" fill="#3b82f6" />
-                    <circle cx="9" cy="6" r="1" fill="#3b82f6" />
-                </svg>
-            );
-        case "backend":
-        case "backend-development":
-            return (
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                    <rect x="4" y="3" width="16" height="6" rx="2" stroke="#6366f1" strokeWidth="2" />
-                    <rect x="4" y="10" width="16" height="6" rx="2" stroke="#6366f1" strokeWidth="2" />
-                    <circle cx="8" cy="6" r="1" fill="#6366f1" />
-                    <circle cx="8" cy="13" r="1" fill="#6366f1" />
-                </svg>
-            );
-        case "fullstack":
-        case "full-stack":
-        case "full-stack-development":
-            return (
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 3l8 4-8 4-8-4 8-4z" stroke="#22c55e" strokeWidth="2" />
-                    <path d="M4 11l8 4 8-4" stroke="#22c55e" strokeWidth="2" />
-                    <path d="M4 15l8 4 8-4" stroke="#22c55e" strokeWidth="2" />
-                </svg>
-            );
-        case "java":
-        case "java-programming":
-            return (
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                    <path d="M8 17h6a3 3 0 003-3V7H5v7a3 3 0 003 3z" stroke="#a855f7" strokeWidth="2" />
-                    <path d="M17 9h1a2 2 0 010 4h-1" stroke="#a855f7" strokeWidth="2" />
-                    <path
-                        d="M9 3s2 1 2 3-2 2-2 4"
-                        stroke="#a855f7"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                    />
-                </svg>
-            );
-        case "python":
-        case "python-programming":
-            return (
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 3c4 0 4 2 4 4H8c0-2 0-4 4-4z" stroke="#10b981" strokeWidth="2" />
-                    <path d="M12 21c-4 0-4-2-4-4h8c0 2 0 4-4 4z" stroke="#10b981" strokeWidth="2" />
-                    <circle cx="10" cy="6" r="1" fill="#10b981" />
-                    <circle cx="14" cy="18" r="1" fill="#10b981" />
-                </svg>
-            );
-        case "go":
-        case "go-programming":
-            return (
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-                    <path d="M4 12h10l-3-3" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" />
-                    <path d="M14 12l-3 3" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" />
-                    <circle cx="18" cy="12" r="2" stroke="#0ea5e9" strokeWidth="2" />
-                </svg>
-            );
-        default:
-            return <span>🎯</span>;
-    }
-}
-
 export default function DashboardPage() {
     const [user, setUser] = useState<any>(null);
     const [displayName, setDisplayName] = useState<string>("User");
     const [applications, setApplications] = useState<Application[]>([]);
-    const [certificates, setCertificates] = useState<Certificate[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'CERTIFICATES'>('OVERVIEW');
     const router = useRouter();
+
+    // Mock data for gamification (In a real app, these would come from DB)
+    const stats = {
+        streak: 12,
+        xp: 2450,
+        completed: 3,
+        rank: "System Architect"
+    };
+
+    const currentProjectTasks = [
+        { id: 1, text: "Define System Requirements", completed: true },
+        { id: 2, text: "Design Database Schema", completed: true },
+        { id: 3, text: "Implement Core API Logic", completed: false },
+        { id: 4, text: "Setup Load Balancer", completed: false },
+    ];
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -124,258 +59,203 @@ export default function DashboardPage() {
                 return;
             }
             setUser(session.user);
-            const metadataName =
-                session.user.user_metadata?.full_name ||
-                session.user.user_metadata?.name ||
-                "";
-            setDisplayName(metadataName || session.user.email?.split("@")[0] || "User");
+            setDisplayName(session.user.user_metadata?.full_name || session.user.email?.split("@")[0] || "Learner");
             fetchData(session.user.email!);
         };
-
         checkAuth();
     }, [router]);
 
     const fetchData = async (email: string) => {
         setIsLoading(true);
         const normalizedEmail = (email || "").trim().toLowerCase();
-
-        // Fetch Applications
         const { data: apps } = await supabase
             .from("applications")
             .select("*")
             .eq("email", normalizedEmail)
             .order("created_at", { ascending: false });
 
-        // Fetch Certificates
-        const { data: certs } = await supabase
-            .from("certificates")
-            .select("*")
-            .eq("email", normalizedEmail)
-            .order("created_at", { ascending: false });
-
-        // Fetch display name from users table
-        const { data: userProfile } = await supabase
-            .from("users")
-            .select("name")
-            .eq("email", normalizedEmail)
-            .maybeSingle();
-
-        const appList = (apps as Application[]) || [];
-        setApplications(appList);
-
-        const profileName = (userProfile as UserProfileRow | null)?.name || "";
-        if (profileName.trim()) {
-            setDisplayName(profileName);
-        } else {
-            const appFullName = appList.find((a) => a.full_name)?.full_name;
-            if (appFullName) {
-                setDisplayName(appFullName);
-            }
-        }
-        setCertificates(certs || []);
+        setApplications((apps as Application[]) || []);
         setIsLoading(false);
-    };
-
-    const handleLogout = async () => {
-        await supabase.auth.signOut();
-        router.push("/");
-        router.refresh();
-    };
-
-    const handlePayment = async (cert: Certificate) => {
-        const res = await loadRazorpay();
-        if (!res) {
-            alert("Razorpay SDK failed to load. Are you online?");
-            return;
-        }
-
-        const options = {
-            key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-            amount: 4900, // Amount in paise (49 INR)
-            currency: "INR",
-            name: "Inzivoo",
-            description: `Payment for ${cert.program} Certificate`,
-            image: "/logo.png",
-            handler: async (response: any) => {
-                if (response.razorpay_payment_id) {
-                    setIsLoading(true);
-                    const { error } = await supabase
-                        .from("certificates")
-                        .update({ payment_status: "PAID" })
-                        .eq("certificate_id", cert.certificate_id);
-
-                    if (error) {
-                        alert("Payment successful but database update failed. Please contact support.");
-                    } else {
-                        // Refresh to show download button
-                        if (user) fetchData(user.email);
-                    }
-                    setIsLoading(false);
-                }
-            },
-            prefill: {
-                name: user?.email?.split('@')[0],
-                email: user?.email,
-            },
-            theme: {
-                color: "#3b82f6",
-            },
-        };
-
-        const paymentObject = new (window as any).Razorpay(options);
-        paymentObject.open();
-    };
-
-    const loadRazorpay = () => {
-        return new Promise((resolve) => {
-            const script = document.createElement("script");
-            script.src = "https://checkout.razorpay.com/v1/checkout.js";
-            script.onload = () => resolve(true);
-            script.onerror = () => resolve(false);
-            document.body.appendChild(script);
-        });
     };
 
     if (isLoading) {
         return (
-            <div className="loading-state">
-                <div className="spinner"></div>
-                <p>Loading your dashboard...</p>
+            <div className="flex flex-col items-center justify-center min-h-screen gap-4">
+                <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                <p className="font-bold text-secondary">Syncing your progress...</p>
             </div>
         );
     }
 
     return (
-        <main className="dashboard-page">
-            <div className="dashboard-header">
+        <main className="min-h-screen bg-background pb-20">
+            {/* Dashboard Header */}
+            <header className="py-12 border-b border-border bg-muted/30">
                 <div className="container">
-                    <div className="header-info">
-                        <h1>Welcome, {displayName}</h1>
-                        <p>Track your learning progress and certificates</p>
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+                        <div>
+                            <div className="flex items-center gap-3 mb-2">
+                                <h1 className="text-3xl font-black tracking-tight">Welcome back, {displayName}</h1>
+                                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/10 text-orange-500 text-xs font-black">
+                                    <Flame className="h-3.5 w-3.5 fill-current" /> {stats.streak} Day Streak
+                                </div>
+                            </div>
+                            <p className="text-secondary">Your engineering journey is 65% complete this week.</p>
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="glass-card px-6 py-3 rounded-2xl border border-border flex items-center gap-4 shadow-sm">
+                                <div className="text-right">
+                                    <div className="text-[10px] font-black uppercase text-secondary tracking-widest">Total XP</div>
+                                    <div className="text-xl font-black text-primary">{stats.xp.toLocaleString()}</div>
+                                </div>
+                                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                                    <Star className="h-5 w-5 text-primary fill-current" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </header>
 
-            <nav className="dashboard-nav">
-                <div className="container">
-                    <button
-                        className={`dashboard-nav-link ${activeTab === 'OVERVIEW' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('OVERVIEW')}
-                    >
-                        My Applications
-                    </button>
-                    <button
-                        className={`dashboard-nav-link ${activeTab === 'CERTIFICATES' ? 'active' : ''}`}
-                        onClick={() => setActiveTab('CERTIFICATES')}
-                    >
-                        Certificates
-                    </button>
-                    <button className="dashboard-nav-link" onClick={() => router.push("/submit")}>Submit Project</button>
+            <div className="container py-12">
+                <div className="grid lg:grid-cols-12 gap-8">
+                    
+                    {/* Left Column: Active Focus */}
+                    <div className="lg:col-span-8 space-y-8">
+                        {/* Progress Tracker Card */}
+                        <section className="glass-card p-8 rounded-[32px] border border-border shadow-xl overflow-hidden relative group">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl" />
+                            
+                            <div className="relative z-10">
+                                <div className="flex justify-between items-start mb-8">
+                                    <div>
+                                        <div className="text-xs font-black uppercase text-primary tracking-widest mb-2">Current Project</div>
+                                        <h2 className="text-2xl font-black mb-1">Distributed Key-Value Store</h2>
+                                        <p className="text-secondary text-sm">Phase 2: Core Implementation</p>
+                                    </div>
+                                    <div className="relative w-24 h-24 flex items-center justify-center">
+                                        <svg className="w-full h-full -rotate-90">
+                                            <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-muted" />
+                                            <circle cx="48" cy="48" r="40" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray={251} strokeDashoffset={251 * (1 - 0.65)} className="text-primary transition-all duration-1000" />
+                                        </svg>
+                                        <span className="absolute text-lg font-black italic">65%</span>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <h3 className="text-sm font-bold flex items-center gap-2">
+                                        <Target className="h-4 w-4 text-primary" /> Task Checklist
+                                    </h3>
+                                    <div className="grid sm:grid-cols-2 gap-3">
+                                        {currentProjectTasks.map((task) => (
+                                            <div key={task.id} className={`p-4 rounded-2xl border flex items-center gap-3 transition-all ${task.completed ? 'bg-emerald-500/5 border-emerald-500/20 opacity-70' : 'bg-muted/50 border-border hover:border-primary/50'}`}>
+                                                <div className={`w-5 h-5 rounded-md flex items-center justify-center ${task.completed ? 'bg-emerald-500 text-white' : 'border-2 border-border'}`}>
+                                                    {task.completed && <CheckCircle2 className="h-3 w-3" />}
+                                                </div>
+                                                <span className={`text-sm font-medium ${task.completed ? 'line-through' : ''}`}>{task.text}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <button className="mt-10 btn btn-primary w-full py-4 flex items-center justify-center gap-2 group">
+                                    Continue Building <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            </div>
+                        </section>
+
+                        {/* Recent Activity / Applications */}
+                        <section className="space-y-4">
+                            <div className="flex justify-between items-center px-2">
+                                <h2 className="text-xl font-black">Ongoing Tracks</h2>
+                                <Link href="/dashboard/applications" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
+                                    View All <ChevronRight className="h-3 w-3" />
+                                </Link>
+                            </div>
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                {applications.length > 0 ? applications.map((app) => (
+                                    <div key={app.id} className="glass-card p-6 rounded-2xl border border-border hover:border-primary/30 transition-all flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+                                            <Zap className="h-6 w-6 text-primary" />
+                                        </div>
+                                        <div className="flex-grow">
+                                            <div className="text-sm font-bold">{PROGRAM_LABEL_MAP[app.program] || app.program}</div>
+                                            <div className="text-[10px] text-secondary font-bold uppercase tracking-wider">{app.application_status}</div>
+                                        </div>
+                                        <ChevronRight className="h-5 w-5 text-secondary opacity-30" />
+                                    </div>
+                                )) : (
+                                    <div className="col-span-2 p-12 text-center border-2 border-dashed border-border rounded-[32px]">
+                                        <p className="text-secondary mb-4">No active tracks found.</p>
+                                        <Link href="/programs" className="btn btn-secondary px-6 py-3 text-sm">Explore Tracks</Link>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+                    </div>
+
+                    {/* Right Column: Recommendations & Stats */}
+                    <div className="lg:col-span-4 space-y-8">
+                        {/* Stats Bento */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="glass-card p-6 rounded-2xl border border-border text-center">
+                                <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
+                                    <Award className="h-5 w-5 text-emerald-500" />
+                                </div>
+                                <div className="text-2xl font-black">{stats.completed}</div>
+                                <div className="text-[10px] text-secondary font-bold uppercase">Completed</div>
+                            </div>
+                            <div className="glass-card p-6 rounded-2xl border border-border text-center">
+                                <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center mx-auto mb-3">
+                                    <Activity className="h-5 w-5 text-blue-500" />
+                                </div>
+                                <div className="text-2xl font-black">Top 5%</div>
+                                <div className="text-[10px] text-secondary font-bold uppercase">Ranking</div>
+                            </div>
+                        </div>
+
+                        {/* Recommendation Card */}
+                        <section className="glass-card p-8 rounded-[32px] border border-primary/20 bg-primary/[0.03] relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-4">
+                                <Zap className="h-6 w-6 text-primary animate-pulse" />
+                            </div>
+                            <div className="text-xs font-black uppercase text-primary tracking-widest mb-4">Up Next</div>
+                            <h3 className="text-xl font-black mb-2">Build a High-Scale API Gateway</h3>
+                            <p className="text-sm text-secondary mb-6 leading-relaxed">
+                                Master request routing, rate limiting, and auth patterns used in production.
+                            </p>
+                            <button className="w-full py-4 rounded-xl bg-foreground text-background font-bold hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                                Unlock Level <Clock className="h-4 w-4" />
+                            </button>
+                        </section>
+
+                        {/* Recent Badges */}
+                        <section className="glass-card p-6 rounded-[32px] border border-border">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-sm font-black uppercase text-secondary tracking-widest">Recent Badges</h3>
+                                <Link href="/dashboard/certificates" className="text-[10px] font-black uppercase text-primary hover:underline">
+                                    Certificates
+                                </Link>
+                            </div>
+                            <div className="flex gap-4 justify-between">
+                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center border border-border group" title="Early Bird">
+                                    <Clock className="h-6 w-6 text-secondary group-hover:text-primary transition-colors" />
+                                </div>
+                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center border border-border group" title="Code Master">
+                                    <Terminal className="h-6 w-6 text-secondary group-hover:text-primary transition-colors" />
+                                </div>
+                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center border border-border group" title="Top Contributor">
+                                    <Award className="h-6 w-6 text-secondary group-hover:text-primary transition-colors" />
+                                </div>
+                                <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center border border-border group opacity-30">
+                                    <Star className="h-6 w-6 text-secondary" />
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
                 </div>
-            </nav>
-
-            <div className="container">
-                {/* Applications Section */}
-                {activeTab === 'OVERVIEW' && (
-                    <section className="premium-section">
-                        <div className="section-header">
-                            <div className="header-title-group">
-                                <h2>My Ongoing Applications</h2>
-                                <span className="badge">{applications.length}</span>
-                            </div>
-                        </div>
-
-                        {applications.length > 0 ? (
-                            <div className="premium-list">
-                                {applications.map((app) => (
-                                    <div key={app.id} className="premium-card">
-                                        <div className="card-media">
-                                            <div className="media-placeholder">
-                                                {renderProgramIcon(app.program)}
-                                            </div>
-                                        </div>
-                                        <div className="card-content">
-                                            <div className="card-top">
-                                                <h3>{PROGRAM_LABEL_MAP[app.program] || app.program.replace(/-/g, ' ').toUpperCase()}</h3>
-                                                <div className={`status-pill ${app.application_status.toLowerCase()}`}>
-                                                    {app.application_status}
-                                                </div>
-                                            </div>
-                                            <div className="card-bottom">
-                                                <p>Experience: {app.experience_level}</p>
-                                                <p className="timestamp">Applied on {new Date(app.created_at).toLocaleDateString()}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="empty-state">
-                                <p>You haven't applied for any programs yet.</p>
-                                <button onClick={() => router.push("/apply")} className="btn-secondary">Explore Programs</button>
-                            </div>
-                        )}
-                    </section>
-                )}
-
-                {/* Certificates Section */}
-                {activeTab === 'CERTIFICATES' && (
-                    <section className="premium-section">
-                        <div className="section-header">
-                            <div className="header-title-group">
-                                <h2>Earned Certificates</h2>
-                                <span className="badge">{certificates.length}</span>
-                            </div>
-                        </div>
-
-                        {certificates.length > 0 ? (
-                            <div className="premium-list">
-                                {certificates.map((cert) => (
-                                    <div key={cert.certificate_id} className="premium-card">
-                                        <div className="card-media">
-                                            <div className="media-placeholder cert-icon">🏆</div>
-                                        </div>
-                                        <div className="card-content">
-                                            <div className="card-top">
-                                                <h3>{cert.program}</h3>
-                                                <div className={`status-pill ${cert.payment_status.toLowerCase()}`}>
-                                                    {cert.payment_status}
-                                                </div>
-                                            </div>
-                                            <div className="card-bottom">
-                                                <p>ID: {cert.certificate_id}</p>
-                                                <div className="card-actions">
-                                                    {cert.payment_status === "PAID" ? (
-                                                        <button
-                                                            className="btn-primary-small"
-                                                            onClick={() => window.open(`/api/certificates/pdf?id=${cert.certificate_id}`, '_blank')}
-                                                        >
-                                                            Download Certificate
-                                                        </button>
-                                                    ) : (
-                                                        <button
-                                                            className="btn-primary-small"
-                                                            onClick={() => handlePayment(cert)}
-                                                        >
-                                                            Pay ₹49 & Download
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="empty-state">
-                                <p>Complete your tasks to earn certificates.</p>
-                                <button onClick={() => setActiveTab('OVERVIEW')} className="btn-secondary">View Applications</button>
-                            </div>
-                        )}
-                    </section>
-                )}
             </div>
-
         </main>
     );
 }
